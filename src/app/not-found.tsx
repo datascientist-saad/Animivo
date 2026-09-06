@@ -14,7 +14,7 @@ export default function NotFound() {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-6">
-        <Logo />
+        <Logo size="sm" />
       </header>
       <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-4 pb-16 text-center">
         <p className="text-sm font-medium text-primary">{brand.name}</p>

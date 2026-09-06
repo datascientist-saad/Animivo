@@ -33,7 +33,6 @@ import { AnalyticsEvents } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/track";
 import { SUPPORTED_SPECIES } from "@/lib/species/registry";
 import { BIRD_SPECIES_OPTIONS } from "@/lib/species/bird-breeds";
-import { brand } from "@/lib/brand";
 import { breedsForSpecies } from "@/lib/breeds";
 import { calculatePetAge, speciesEmoji } from "@/lib/calculations";
 import { createClient } from "@/lib/supabase/client";
@@ -62,6 +61,7 @@ import {
   initialOnboardingDraft,
   type OnboardingDraftData,
 } from "@/types/onboarding-draft";
+import { Logo } from "@/components/brand/logo";
 import { PetPhotoPicker } from "@/components/pets/pet-photo-field";
 
 const STEPS = ["Pet basics", "Body and lifestyle", "Diet and health", "Plan preview"] as const;
@@ -273,9 +273,9 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
       )}
     >
       {isAuthenticatedFlow ? (
-        <div className="mb-2 text-center">
+        <div className="mb-2 flex flex-col items-center text-center">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Add a pet</p>
-          <h1 className="font-display text-xl font-semibold">{brand.name}</h1>
+          <Logo size="sm" className="mt-1" />
         </div>
       ) : null}
 

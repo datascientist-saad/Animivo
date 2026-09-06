@@ -1,13 +1,13 @@
 "use client";
 
-import { brand } from "@/lib/brand";
+import { Logo } from "@/components/brand/logo";
 import { getSupabasePublicConfig } from "@/lib/supabase/client";
 
 export function MissingConfigScreen() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-lg space-y-4 rounded-3xl border border-border bg-card p-8 shadow-sm">
-        <p className="text-sm font-medium text-primary">{brand.logoText}</p>
+        <Logo size="sm" />
         <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">
           Almost ready — add Supabase keys
         </h1>

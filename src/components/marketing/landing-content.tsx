@@ -1,12 +1,13 @@
 import {
   Bot,
   HeartPulse,
-  PawPrint,
   Salad,
   Scale,
   ShieldCheck,
+  Sparkles,
   Syringe,
 } from "lucide-react";
+import Image from "next/image";
 import { brand } from "@/lib/brand";
 import { LandingCta } from "@/components/marketing/landing-cta";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -138,69 +139,91 @@ const faqs = [
 export function LandingContent() {
   return (
     <>
-      <section className="mx-auto max-w-6xl px-4 pb-16 pt-8 md:px-8 md:pb-24 md:pt-12">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div className="space-y-8 animate-fade-up">
-            <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-sm font-medium text-secondary-foreground">
-              <PawPrint className="size-4 text-primary" aria-hidden />
-              Personalized starting plans for dogs, cats, and birds
-            </div>
-            <div className="space-y-4">
-              <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
-                {brand.tagline}
-              </h1>
-              <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">{brand.subtitle}</p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <LandingCta href="/get-started">Create my pet&apos;s plan</LandingCta>
-              <LandingCta href="/login" variant="outline">
-                Sign in
-              </LandingCta>
-            </div>
-            <p className="text-sm text-muted-foreground">Free to start · No credit card required</p>
+      <section className="mx-auto grid max-w-[1240px] items-center gap-10 px-5 pb-16 pt-6 md:px-8 md:pb-20 md:pt-8 lg:grid-cols-[1.03fr_0.97fr] lg:gap-16 lg:pb-24">
+        <div className="hero-copy">
+          <p className="eyebrow-kicker anim-fade-up inline-flex items-center gap-2 text-[0.76rem] font-extrabold">
+            <Sparkles className="anim-paw size-[15px]" aria-hidden />
+            Personalized starting plans for dogs, cats, and birds
+          </p>
+          <div className="anim-fade-up anim-delay-1">
+            <h1 className="font-display mt-5 max-w-[660px] text-[clamp(2.4rem,5vw,4.6rem)] font-medium leading-[0.98] tracking-[-0.05em] text-foreground">
+              Every pet.
+              <br />
+              <span className="headline-accent">One smarter care plan.</span>
+            </h1>
+            <p className="mt-6 max-w-[590px] text-[1.05rem] leading-relaxed text-muted-foreground md:text-[1.15rem] md:leading-[1.65]">
+              {brand.subtitle}
+            </p>
           </div>
+          <div className="anim-fade-up anim-delay-2 mt-8 flex flex-col gap-3 sm:flex-row">
+            <LandingCta href="/get-started">Create my pet&apos;s plan</LandingCta>
+            <LandingCta href="/login" variant="outline">
+              Sign in
+            </LandingCta>
+          </div>
+          <p className="anim-fade-up anim-delay-3 mt-3 text-sm text-muted-foreground">
+            Free to start · No credit card required
+          </p>
+        </div>
 
-          <div className="relative mx-auto w-full max-w-sm animate-gentle-scale lg:max-w-md">
-            <div className="absolute -left-6 -top-6 size-24 rounded-full bg-primary/10 blur-2xl" aria-hidden />
-            <div className="absolute -bottom-8 -right-4 size-32 rounded-full bg-accent/15 blur-2xl" aria-hidden />
-            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card p-6 shadow-xl">
-              <div className="mb-4 flex items-center justify-between">
-                <span className="font-display text-lg font-semibold">{brand.logoText}</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                  Today
-                </span>
-              </div>
-              {productPreviews[0].mock}
+        <div className="anim-scale-in anim-delay-2 relative mx-auto w-full max-w-xl lg:max-w-none">
+          <div className="hero-visual relative min-h-[360px] overflow-hidden rounded-[2.5rem] sm:min-h-[480px] sm:rounded-[170px_170px_24px_24px] lg:min-h-[560px]">
+            <Image
+              src="/images/animivo-waitlist-hero.webp"
+              alt="A golden retriever, a tabby cat, and a green budgerigar together in a sunlit living room"
+              fill
+              priority
+              className="object-cover object-[60%_center]"
+              sizes="(max-width: 1024px) 100vw, 48vw"
+            />
+            <div className="anim-float absolute left-3 top-6 z-[2] flex max-w-[220px] items-center gap-3 rounded-2xl border border-white/70 bg-white/90 px-3.5 py-3 shadow-[0_12px_32px_rgb(44_42_38_/_0.14)] backdrop-blur-md sm:left-5 sm:top-16">
+              <HeartPulse className="size-[18px] shrink-0 text-accent" aria-hidden />
+              <span className="text-[0.8rem] leading-snug text-foreground">
+                <strong className="block font-semibold">Health routines</strong>
+                Never miss what matters
+              </span>
+            </div>
+            <div className="anim-float-delayed absolute bottom-5 right-3 z-[2] flex max-w-[220px] items-center gap-3 rounded-2xl border border-white/70 bg-white/90 px-3.5 py-3 shadow-[0_12px_32px_rgb(44_42_38_/_0.14)] backdrop-blur-md sm:bottom-11 sm:right-5">
+              <Salad className="size-[18px] shrink-0 text-primary" aria-hidden />
+              <span className="text-[0.8rem] leading-snug text-foreground">
+                <strong className="block font-semibold">Smarter feeding</strong>
+                Guidance for their needs
+              </span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-border bg-card/40 px-4 py-16 md:px-8 md:py-20">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">How Animivo works</h2>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+      <section className="bg-ink px-5 py-16 text-ink-foreground md:px-8 md:py-[100px]">
+        <div className="mx-auto grid max-w-[1120px] gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-[70px]">
+          <div className="anim-fade-up">
+            <p className="text-[0.76rem] font-extrabold uppercase tracking-[0.14em] text-accent">
+              Built around real pet life
+            </p>
+            <h2 className="font-display mt-4 text-[2.4rem] font-medium leading-[1.04] tracking-[-0.045em] md:text-[3.4rem]">
+              How Animivo works
+            </h2>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3 md:gap-5">
             {howItWorks.map((item) => (
-              <Card key={item.step} className="rounded-2xl">
-                <CardHeader>
-                  <p className="text-sm font-medium text-primary">Step {item.step}</p>
-                  <CardTitle className="font-display text-xl">{item.title}</CardTitle>
-                  <CardDescription>{item.body}</CardDescription>
-                </CardHeader>
-              </Card>
+              <article key={item.step} className="anim-fade-up border-t border-white/25 pt-5">
+                <p className="text-[0.76rem] font-extrabold text-accent">0{item.step}</p>
+                <h3 className="mt-10 font-display text-[1.12rem] font-medium tracking-tight">{item.title}</h3>
+                <p className="mt-3 text-[0.9rem] leading-relaxed text-white/70">{item.body}</p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 md:px-8 md:py-20">
-        <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">Product preview</h2>
+      <section className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
+        <h2 className="font-display text-3xl font-medium tracking-[-0.04em] md:text-4xl">Product preview</h2>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           These previews reflect features that already exist in Animivo. Nothing here is a promised future product.
         </p>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {productPreviews.map((preview) => (
-            <Card key={preview.title} className="rounded-2xl">
+            <Card key={preview.title} className="lift-card rounded-2xl">
               <CardHeader>
                 <div className="mb-2 flex size-11 items-center justify-center rounded-2xl bg-secondary text-primary">
                   <preview.icon className="size-5" aria-hidden />
@@ -214,11 +237,11 @@ export function LandingContent() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-card/40 px-4 py-16 md:px-8 md:py-20">
-        <div className="mx-auto max-w-6xl space-y-8">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">Supported pets</h2>
+      <section className="border-y border-border bg-card/40 px-5 py-16 md:px-8 md:py-20">
+        <div className="mx-auto max-w-[1120px] space-y-8">
+          <h2 className="font-display text-3xl font-medium tracking-[-0.04em] md:text-4xl">Supported pets</h2>
           <div className="grid gap-5 md:grid-cols-3">
-            <Card className="rounded-2xl">
+            <Card className="lift-card rounded-2xl">
               <CardHeader>
                 <CardTitle className="font-display text-lg">Dogs</CardTitle>
                 <CardDescription>
@@ -226,7 +249,7 @@ export function LandingContent() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="rounded-2xl">
+            <Card className="lift-card rounded-2xl">
               <CardHeader>
                 <CardTitle className="font-display text-lg">Cats</CardTitle>
                 <CardDescription>
@@ -234,7 +257,7 @@ export function LandingContent() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <Card className="rounded-2xl">
+            <Card className="lift-card rounded-2xl">
               <CardHeader>
                 <CardTitle className="font-display text-lg">Birds</CardTitle>
                 <CardDescription>
@@ -247,10 +270,10 @@ export function LandingContent() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 md:px-8 md:py-20">
+      <section className="mx-auto max-w-[1120px] px-5 py-16 md:px-8 md:py-20">
         <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
           <div>
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">Safety and trust</h2>
+            <h2 className="font-display text-3xl font-medium tracking-[-0.04em] md:text-4xl">Safety and trust</h2>
             <p className="mt-3 text-muted-foreground">
               Animivo is a care-organization product. It does not replace a licensed veterinarian.
             </p>
@@ -271,9 +294,9 @@ export function LandingContent() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-card/40 px-4 py-16 md:px-8 md:py-20">
+      <section className="border-y border-border bg-card/40 px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-3xl">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">FAQ</h2>
+          <h2 className="font-display text-3xl font-medium tracking-[-0.04em] md:text-4xl">FAQ</h2>
           <dl className="mt-8 space-y-6">
             {faqs.map((item) => (
               <div key={item.q}>
@@ -285,9 +308,9 @@ export function LandingContent() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 text-center md:px-8 md:py-24">
+      <section className="mx-auto max-w-[1120px] px-5 py-16 text-center md:px-8 md:py-24">
         <div className="mx-auto max-w-2xl space-y-6">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="font-display text-3xl font-medium tracking-[-0.04em] md:text-4xl">
             Ready to create a starting plan?
           </h2>
           <p className="text-muted-foreground">

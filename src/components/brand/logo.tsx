@@ -13,9 +13,10 @@ interface LogoProps {
   className?: string;
   showTagline?: boolean;
   size?: keyof typeof sizeClass;
+  priority?: boolean;
 }
 
-export function Logo({ className, showTagline = false, size }: LogoProps) {
+export function Logo({ className, showTagline = false, size, priority = false }: LogoProps) {
   const resolved = size ?? (showTagline ? "lg" : "md");
 
   return (
@@ -30,7 +31,7 @@ export function Logo({ className, showTagline = false, size }: LogoProps) {
         width={119}
         height={72}
         className={cn("w-auto object-contain object-left", sizeClass[resolved])}
-        priority
+        priority={priority}
       />
     </Link>
   );

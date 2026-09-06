@@ -91,7 +91,7 @@ export function AppShell({ children, petSelector }: AppShellProps) {
       <SkipLink />
       <div className="mx-auto flex min-h-screen max-w-7xl">
         <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card/50 p-5 md:flex">
-          <Logo className="mb-2" size="sm" />
+          <Logo className="mb-2" size="sm" priority />
           {petSelector ? <div className="mb-6 mt-4">{petSelector}</div> : null}
           <nav className="flex flex-1 flex-col gap-1">
             {primaryNav.map((item) => (

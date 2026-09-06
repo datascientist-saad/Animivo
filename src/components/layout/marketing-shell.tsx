@@ -29,7 +29,7 @@ export function MarketingShell({ children, variant = "default" }: MarketingShell
             : "h-[88px] md:h-[96px]",
         )}
       >
-        <Logo size={isOnboarding ? "sm" : "md"} />
+        <Logo size={isOnboarding ? "sm" : "md"} priority />
         <Link
           href="/login"
           className="inline-flex min-h-11 shrink-0 items-center text-[0.92rem] font-semibold text-primary underline decoration-primary/40 underline-offset-[5px] transition-colors hover:decoration-primary"

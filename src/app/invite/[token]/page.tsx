@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingState } from "@/components/shared/page-states";
-import { brand } from "@/lib/brand";
+import { Logo } from "@/components/brand/logo";
 import { createClient } from "@/lib/supabase/client";
 
 export default function InviteAcceptPage() {
@@ -72,8 +72,10 @@ export default function InviteAcceptPage() {
     <div className="flex min-h-dvh items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md rounded-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-primary">{brand.logoText}</CardTitle>
-          <p className="text-sm text-muted-foreground">Caregiver invite</p>
+          <div className="mb-2 flex justify-center">
+            <Logo size="sm" />
+          </div>
+          <CardTitle className="font-display text-xl">Caregiver invite</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-center">
           {petName && !invalid ? (

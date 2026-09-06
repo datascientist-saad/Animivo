@@ -8,6 +8,7 @@
   --popover: #ffffff;
   --popover-foreground: #2c2a26;
   --primary: #6b8f71;
+  --primary-hover: #5d7e63;
   --primary-foreground: #ffffff;
   --secondary: #f3ede4;
   --secondary-foreground: #3d3429;
@@ -24,7 +25,10 @@
   --success: #5a8f6b;
   --warning: #d4a373;
   --surface: #ffffff;
+  --ink: #3a4a3e;
+  --ink-foreground: #f7f3ee;
   --shadow-soft: 0 1px 3px rgb(44 42 38 / 0.06), 0 8px 24px rgb(44 42 38 / 0.04);
+  --hero-shadow: 0 28px 65px rgb(107 143 113 / 0.22);
   --spacing-page: 1.25rem;
 }
 
@@ -36,6 +40,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -51,7 +56,10 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
   --shadow-soft: var(--shadow-soft);
+  --shadow-hero: var(--hero-shadow);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
   --radius-sm: calc(var(--radius) - 4px);
@@ -64,7 +72,7 @@
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -75,7 +83,7 @@
 @keyframes gentle-scale {
   from {
     opacity: 0;
-    transform: scale(0.97);
+    transform: scale(0.985);
   }
   to {
     opacity: 1;
@@ -89,16 +97,124 @@
   }
 }
 
-.animate-fade-up {
-  animation: fade-up 0.5s ease-out both;
+@keyframes paw-soft {
+  0%,
+  to {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-1px);
+  }
 }
 
-.animate-gentle-scale {
-  animation: gentle-scale 0.4s ease-out both;
+@keyframes float-card {
+  0%,
+  to {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.animate-fade-up,
+.anim-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-gentle-scale,
+.anim-scale-in {
+  animation: gentle-scale 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-spin-slow {
   animation: spin-slow 1.2s linear infinite;
+}
+
+.anim-delay-1 {
+  animation-delay: 80ms;
+}
+
+.anim-delay-2 {
+  animation-delay: 0.16s;
+}
+
+.anim-delay-3 {
+  animation-delay: 0.24s;
+}
+
+.anim-paw {
+  transform-origin: 50% 70%;
+  animation: paw-soft 3.6s ease-in-out infinite;
+}
+
+.anim-float {
+  animation: float-card 5.5s ease-in-out infinite;
+}
+
+.anim-float-delayed {
+  animation: float-card 6.2s ease-in-out 0.8s infinite;
+}
+
+.eyebrow-kicker {
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.headline-accent {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.hero-visual {
+  box-shadow: var(--hero-shadow);
+}
+
+.lift-card {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s,
+    border-color 0.25s;
+}
+
+.lift-card:hover {
+  border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+  box-shadow: 0 10px 28px rgb(44 42 38 / 0.08);
+  transform: translateY(-3px);
+}
+
+.field-ease {
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background-color 0.2s;
+}
+
+.field-ease:hover {
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+}
+
+.field-ease:focus,
+.field-ease:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgb(107 143 113 / 0.18);
+}
+
+.btn-ease {
+  transition:
+    background-color 0.2s,
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.2s;
+}
+
+.btn-ease:hover {
+  transform: translateY(-1px);
+}
+
+.btn-ease:active {
+  transform: translateY(0);
 }
 
 * {
@@ -128,8 +244,19 @@ h4,
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-gentle-scale,
-  .animate-spin-slow {
+  .animate-spin-slow,
+  .anim-fade-up,
+  .anim-scale-in,
+  .anim-paw,
+  .anim-float,
+  .anim-float-delayed {
     animation: none;
+  }
+
+  .lift-card:hover,
+  .btn-ease:hover,
+  .btn-ease:active {
+    transform: none;
   }
 
   html {
@@ -144,7 +271,7 @@ h4,
 
 :focus-visible {
   outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 .sr-only {

@@ -11,7 +11,7 @@ export function LegalPage({ title, children }: LegalPageProps) {
   return (
     <div className="min-h-dvh bg-background">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-4 py-6">
-        <Logo />
+        <Logo size="sm" />
         <Link href="/" className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground">
           Back
         </Link>

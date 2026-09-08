@@ -361,7 +361,7 @@ export function calculateDietPlan(input: DietCalculationInput): DietCalculationR
   }
 
   warnings.push(
-    "Monitor weight and body condition every 2–4 weeks and ask a veterinarian before making large diet changes."
+    "Monitor weight and body condition every 2 to 4 weeks and ask a veterinarian before making large diet changes."
   );
 
   return {
@@ -384,7 +384,7 @@ export function calculateDietPlan(input: DietCalculationInput): DietCalculationR
         : "Provide constant access to fresh water, especially with dry food diets.",
     treatAllowanceKcal: Math.round(merKcal * TREAT_ALLOWANCE_FRACTION),
     adjustmentGuidance:
-      "Weigh your pet every 2–4 weeks. If weight changes more than about 5% in a month, adjust portions gradually and consult your veterinarian.",
+      "Weigh your pet every 2 to 4 weeks. If weight changes more than about 5% in a month, adjust portions gradually and consult your veterinarian.",
     warnings,
     elevatedVetWarning,
     recommendationBlocked: false,

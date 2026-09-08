@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AddCareTaskDialog } from "@/components/forms/add-care-task-dialog";
 import { Badge } from "@/components/ui/badge";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -91,10 +92,13 @@ export default function CarePage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Care plan</h1>
-          <p className="text-sm text-muted-foreground">{selectedPet.name}'s daily routines</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-1">
+          <BackLink fallbackHref="/care-plan" />
+          <div>
+            <h1 className="text-2xl font-semibold">Care plan</h1>
+            <p className="text-sm text-muted-foreground">{selectedPet.name}'s daily routines</p>
+          </div>
         </div>
         <Button onClick={() => setDialogOpen(true)} className="rounded-xl">Add task</Button>
       </div>

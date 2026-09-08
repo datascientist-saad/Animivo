@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { AddRecordDialog } from "@/components/forms/add-record-dialog";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState, ErrorState, LoadingState } from "@/components/shared/page-states";
@@ -58,9 +58,7 @@ export default function RecordsPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild className="rounded-xl">
-          <Link href="/health"><ArrowLeft className="h-5 w-5" /></Link>
-        </Button>
+        <BackLink fallbackHref="/health" />
         <div className="flex-1">
           <h1 className="text-xl font-semibold">Health records</h1>
           <p className="text-sm text-muted-foreground">Vet visits, labs & documents</p>

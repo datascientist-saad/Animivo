@@ -64,7 +64,7 @@ const productPreviews = [
           <p className="text-xs text-muted-foreground">Daily estimate</p>
           <p className="font-display text-xl font-semibold">650–794 kcal</p>
         </div>
-        <p className="text-xs text-muted-foreground">08:00 — 361 kcal · 18:00 — 361 kcal</p>
+        <p className="text-xs text-muted-foreground">08:00: 361 kcal · 18:00: 361 kcal</p>
       </div>
     ),
   },
@@ -262,7 +262,7 @@ export function LandingContent() {
                 <CardTitle className="font-display text-lg">Birds</CardTitle>
                 <CardDescription>
                   Species profile, gram-based weight tracking, and care organization. Personalized calorie or
-                  feeding-quantity calculation is not available yet — ask an avian veterinarian.
+                  feeding-quantity calculation is not available yet. Ask an avian veterinarian.
                 </CardDescription>
               </CardHeader>
             </Card>

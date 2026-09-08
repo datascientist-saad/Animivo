@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Printer } from "lucide-react";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorState, LoadingState } from "@/components/shared/page-states";
@@ -69,9 +69,10 @@ export default function VetReportPage() {
   return (
     <div className="vet-report mx-auto max-w-3xl space-y-6 print:max-w-none print:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <Button asChild variant="ghost" className="rounded-xl">
-          <Link href={`/pets/${pet.id}`}>← Back to profile</Link>
-        </Button>
+        <div className="flex items-center gap-1">
+          <BackLink fallbackHref={`/pets/${pet.id}`} />
+          <span className="text-sm text-muted-foreground">Back to profile</span>
+        </div>
         <Button onClick={() => window.print()} className="rounded-xl">
           <Printer className="mr-2 size-4" />
           Print or Save as PDF

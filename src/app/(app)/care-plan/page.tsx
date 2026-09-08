@@ -74,7 +74,7 @@ export default function CarePlanPage() {
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               {speciesDef.preventiveCareEngine === "bird"
-                ? "Bird care focuses on daily habitat, nutrition, and observation — confirm veterinary schedules with an avian vet."
+                ? "Bird care focuses on daily habitat, nutrition, and observation. Confirm veterinary schedules with an avian vet."
                 : "Vaccination, parasite prevention, and wellness tasks are suggested based on your records and species."}
             </CardContent>
           </Card>

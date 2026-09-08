@@ -26,7 +26,7 @@ export default function PrivacyPage() {
           {legalEmail()}
         </a>
         {!legalConfig.supportEmail.confirmed
-          ? " — confirm this mailbox is monitored before treating it as the official support address."
+          ? " Confirm this mailbox is monitored before treating it as the official support address."
           : ""}
       </p>
 
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
       <h2 className="pt-2 text-xl font-semibold">How we use data</h2>
       <p>
         We use your data to operate your dashboard, generate starting-point nutrition estimates, send
-        reminders you enable, and — when you use AI — provide educational answers. We do not sell
+        reminders you enable, and, when you use AI, provide educational answers. We do not sell
         personal data.
       </p>
 

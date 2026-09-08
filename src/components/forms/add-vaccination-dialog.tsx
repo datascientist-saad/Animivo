@@ -80,7 +80,7 @@ export function AddVaccinationDialog({
         toast.success("Vaccination updated.");
       } else {
         await service.create(petId, parsed.data);
-        toast.success("Vaccination added — we'll help you stay on track.");
+        toast.success("Vaccination added. We'll help you stay on track.");
       }
       onOpenChange(false);
       onSuccess?.();

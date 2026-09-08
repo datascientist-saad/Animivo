@@ -31,7 +31,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { AnalyticsEvents } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/track";
-import { SUPPORTED_SPECIES } from "@/lib/species/registry";
 import { BIRD_SPECIES_OPTIONS } from "@/lib/species/bird-breeds";
 import { breedsForSpecies } from "@/lib/breeds";
 import { calculatePetAge, speciesEmoji } from "@/lib/calculations";
@@ -63,6 +62,8 @@ import {
 } from "@/types/onboarding-draft";
 import { Logo } from "@/components/brand/logo";
 import { PetPhotoPicker } from "@/components/pets/pet-photo-field";
+import { SpeciesPicker } from "@/components/onboarding/species-picker";
+import { BackLink } from "@/components/shared/back-link";
 
 const STEPS = ["Pet basics", "Body and lifestyle", "Diet and health", "Plan preview"] as const;
 const STEP_KEYS: OnboardingDraftData["step"][] = ["basics", "body", "diet", "preview"];
@@ -229,7 +230,7 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
           await new PetService(supabase).update(petId, { profile_image_url: url });
         } catch (photoErr) {
           console.warn("[Animivo:onboarding] Photo upload failed", photoErr);
-          toast.message(`${petName} was saved — you can add a photo from their profile.`);
+          toast.message(`${petName} was saved. You can add a photo from their profile.`);
         }
       }
 
@@ -261,15 +262,13 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
     router.push("/signup?next=/setup/complete");
   }
 
-  const showStickyNav = step < TOTAL_STEPS - 1;
   const mammal = data.species !== "bird";
 
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-lg flex-1 flex-col animate-fade-up px-3 sm:px-4",
-        "py-4 sm:py-6",
-        showStickyNav && "pb-28"
+        "mx-auto flex w-full max-w-lg flex-col animate-fade-up",
+        isAuthenticatedFlow ? "pb-[max(1rem,env(safe-area-inset-bottom))]" : ""
       )}
     >
       {isAuthenticatedFlow ? (
@@ -280,11 +279,19 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
       ) : null}
 
       <div className="mb-4 space-y-2">
-        <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span aria-live="polite">
-            Step {step + 1} of {TOTAL_STEPS} · {STEPS[step]}
-          </span>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-1">
+            {step > 0 ? (
+              <BackLink fallbackHref={isAuthenticatedFlow ? "/home" : "/"} onClick={back} />
+            ) : isAuthenticatedFlow ? (
+              <BackLink fallbackHref="/home" />
+            ) : null}
+            <span className="text-xs text-muted-foreground" aria-live="polite">
+              Step {step + 1} of {TOTAL_STEPS} · {STEPS[step]}
+            </span>
+          </div>
           <Button
+            type="button"
             variant="ghost"
             size="sm"
             onClick={confirmRestart}
@@ -330,12 +337,9 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
             </div>
             <fieldset className="space-y-2">
               <legend className="text-sm font-medium">Pet type</legend>
-              <SegmentedSelector
-                id="species"
-                ariaLabel="Pet type"
+              <SpeciesPicker
                 value={data.species}
-                onChange={(v) => {
-                  const nextSpecies = v as OnboardingDraftData["species"];
+                onChange={(nextSpecies) => {
                   const crossingBird =
                     nextSpecies === "bird" || data.species === "bird";
                   update({
@@ -349,10 +353,6 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
                     },
                   });
                 }}
-                options={SUPPORTED_SPECIES.map((s) => ({
-                  value: s.id,
-                  label: `${s.icon} ${s.displayName}`,
-                }))}
               />
             </fieldset>
             <div className="space-y-2">
@@ -947,7 +947,7 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
                     <ul className="space-y-1 text-sm text-muted-foreground">
                       {preview.mealSchedule.map((meal) => (
                         <li key={meal.mealIndex}>
-                          {meal.time} — {meal.calories} kcal
+                          {meal.time}: {meal.calories} kcal
                         </li>
                       ))}
                     </ul>
@@ -1030,20 +1030,20 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
         </Card>
       )}
 
-      {showStickyNav ? (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-sm [padding-bottom:max(0.75rem,env(safe-area-inset-bottom))]">
-          <div className="mx-auto flex max-w-lg gap-3">
-            <Button variant="outline" onClick={back} disabled={step === 0} className="min-h-11 flex-1 rounded-xl">
+      {step < TOTAL_STEPS - 1 ? (
+        <div className="mt-6 flex gap-3">
+          {step > 0 ? (
+            <Button type="button" variant="outline" onClick={back} className="min-h-11 flex-1 rounded-xl">
               Back
             </Button>
-            <Button onClick={next} className="min-h-11 flex-1 rounded-xl">
-              Continue
-            </Button>
-          </div>
+          ) : null}
+          <Button type="button" onClick={next} className="min-h-11 flex-1 rounded-xl">
+            Continue
+          </Button>
         </div>
       ) : (
         <div className="mt-4 flex justify-start">
-          <Button variant="outline" onClick={back} className="min-h-11 rounded-xl">
+          <Button type="button" variant="outline" onClick={back} className="min-h-11 rounded-xl">
             Back
           </Button>
         </div>

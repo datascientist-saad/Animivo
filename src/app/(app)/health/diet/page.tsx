@@ -70,6 +70,7 @@ function MammalDietView({
       <PageHeader
         title="Diet plan"
         description={`Personalized nutrition for ${selectedPet.name}`}
+        backHref="/health"
         action={
           <Button variant="outline" size="sm" className="rounded-xl" onClick={onRegenerateOpen}>
             <RefreshCw className="mr-2 size-4" />
@@ -205,6 +206,7 @@ function BirdDietView({
       <PageHeader
         title="Diet plan"
         description={`Avian nutrition guidance for ${selectedPet.name}`}
+        backHref="/health"
         action={
           <Button variant="outline" size="sm" className="rounded-xl" onClick={onRegenerateOpen}>
             <RefreshCw className="mr-2 size-4" />
@@ -441,7 +443,11 @@ export default function DietPlanPage() {
   if (!hasRenderablePlan) {
     return (
       <div className="space-y-5">
-        <PageHeader title="Diet plan" description={`Personalized nutrition for ${selectedPet.name}`} />
+        <PageHeader
+          title="Diet plan"
+          description={`Personalized nutrition for ${selectedPet.name}`}
+          backHref="/health"
+        />
         <EmptyState
           title="No diet plan yet"
           description="Generate a plan based on your pet's profile."

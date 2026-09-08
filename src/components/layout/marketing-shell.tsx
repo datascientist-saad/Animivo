@@ -37,13 +37,26 @@ export function MarketingShell({ children, variant = "default" }: MarketingShell
           Sign In
         </Link>
       </header>
-      <main id="main-content" className={cn("flex min-h-0 flex-1 flex-col")}>
-        {children}
+      <main
+        id="main-content"
+        className={cn(
+          "flex min-h-0 flex-1 flex-col",
+          isOnboarding &&
+            "overflow-y-auto px-3 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-4 sm:pt-8 sm:pb-10",
+        )}
+      >
+        <div
+          className={cn(
+            isOnboarding && "flex flex-1 flex-col justify-start sm:justify-center",
+          )}
+        >
+          {children}
+        </div>
       </main>
       <footer
         className={cn(
-          "mt-auto shrink-0 border-t border-border px-5 md:px-8",
-          isOnboarding ? "py-4 text-center text-xs text-muted-foreground" : "py-9",
+          "shrink-0 border-t border-border px-5 md:px-8",
+          isOnboarding ? "py-4 text-center text-xs text-muted-foreground" : "mt-auto py-9",
         )}
       >
         <div

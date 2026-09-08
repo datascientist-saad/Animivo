@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles } from "lucide-react";
+import { Loader2, Send, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { AiTypingIndicator } from "@/components/ai/typing-indicator";
 import { PetSelector } from "@/components/pets/pet-selector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,7 +37,7 @@ export default function AiPage() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, sending]);
 
   async function sendMessage(text: string) {
     if (!text.trim() || !selectedPet || sending) return;
@@ -101,6 +102,7 @@ export default function AiPage() {
                   variant="secondary"
                   size="sm"
                   className="rounded-full text-xs"
+                  disabled={sending}
                   onClick={() => void sendMessage(s)}
                 >
                   {s}
@@ -126,6 +128,7 @@ export default function AiPage() {
                 </div>
               </div>
             ))}
+            {sending ? <AiTypingIndicator /> : null}
             <div ref={bottomRef} />
           </div>
         )}
@@ -145,8 +148,14 @@ export default function AiPage() {
           className="rounded-xl"
           disabled={sending}
         />
-        <Button type="submit" size="icon" disabled={sending || !input.trim()} className="rounded-xl shrink-0">
-          <Send className="h-4 w-4" />
+        <Button
+          type="submit"
+          size="icon"
+          disabled={sending || !input.trim()}
+          className="rounded-xl shrink-0"
+          aria-label={sending ? `${brand.aiName} is thinking` : "Send message"}
+        >
+          {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
       </form>
     </div>

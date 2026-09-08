@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, CheckCircle, Trash2 } from "lucide-react";
+import { CheckCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -100,7 +100,7 @@ export default function SymptomsPage() {
     try {
       const service = new SymptomService(supabase);
       await service.resolve(id);
-      toast.success("Marked as resolved — glad they're feeling better!");
+      toast.success("Marked as resolved. Glad they're feeling better!");
       void loadData();
     } catch (err) {
       toast.error(toUserMessage(err));
@@ -125,9 +125,7 @@ export default function SymptomsPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild className="rounded-xl">
-          <Link href="/health"><ArrowLeft className="h-5 w-5" /></Link>
-        </Button>
+        <BackLink fallbackHref="/health" />
         <div className="flex-1">
           <h1 className="text-xl font-semibold">Symptoms</h1>
           <p className="text-sm text-muted-foreground">Track what you notice</p>

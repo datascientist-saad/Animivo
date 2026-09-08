@@ -7,7 +7,7 @@ import { publicPageMetadata } from "@/lib/seo";
 import { organizationJsonLd, webApplicationJsonLd } from "@/lib/seo-jsonld";
 
 export const metadata: Metadata = publicPageMetadata({
-  title: `${brand.name} — ${brand.tagline}`,
+  title: `${brand.name}: ${brand.tagline}`,
   description: brand.subtitle,
   path: "/",
 });

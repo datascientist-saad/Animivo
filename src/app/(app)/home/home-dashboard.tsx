@@ -265,7 +265,7 @@ export function HomeDashboard() {
               <p className="mt-1 text-sm text-muted-foreground">{topInsight.body}</p>
               {topInsight.requiresVetReview ? (
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Consider contacting a veterinarian — Animivo does not diagnose.
+                  Consider contacting a veterinarian. Animivo does not diagnose.
                 </p>
               ) : null}
             </div>

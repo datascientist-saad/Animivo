@@ -51,7 +51,7 @@ export function AddWeightDialog({ petId, open, onOpenChange, onSuccess }: AddWei
       if (!user) throw new Error("Please sign in to add weight.");
       const service = new WeightService(supabase);
       await service.add(petId, user.id, parsed.data);
-      toast.success("Weight recorded — you're doing great!");
+      toast.success("Weight recorded. You're doing great!");
       setWeightKg("");
       setNotes("");
       onOpenChange(false);

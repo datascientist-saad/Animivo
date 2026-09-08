@@ -70,7 +70,7 @@ export function LogMealDialog({
       if (!user) throw new Error("Please sign in to log meals.");
       const service = new NutritionService(supabase);
       await service.logMeal(petId, user.id, parsed.data);
-      toast.success("Meal logged — nice work keeping track!");
+      toast.success("Meal logged. Nice work keeping track!");
       setFoodName("");
       setAmount("");
       setNotes("");

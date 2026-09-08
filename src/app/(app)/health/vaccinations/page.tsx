@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AddVaccinationDialog } from "@/components/forms/add-vaccination-dialog";
 import { Badge } from "@/components/ui/badge";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -88,9 +88,7 @@ export default function VaccinationsPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild className="rounded-xl">
-          <Link href="/health"><ArrowLeft className="h-5 w-5" /></Link>
-        </Button>
+        <BackLink fallbackHref="/health" />
         <div className="flex-1">
           <h1 className="text-xl font-semibold">Vaccinations</h1>
           <p className="text-sm text-muted-foreground">Stay ahead of preventive care</p>

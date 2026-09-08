@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sheet";
 import { brand } from "@/lib/brand";
 import { t, DEFAULT_LOCALE } from "@/lib/i18n";
+import { isAppNavActive } from "@/lib/nav-active";
 import { cn } from "@/lib/utils";
 
 const primaryNav = [
@@ -70,6 +71,7 @@ function NavLink({
           : "text-muted-foreground hover:bg-secondary hover:text-foreground",
         compact && "flex-col gap-1 px-2 py-2 text-[11px]"
       )}
+      aria-current={active ? "page" : undefined}
     >
       <Icon className="size-5 shrink-0" />
       <span>{label}</span>
@@ -81,8 +83,8 @@ export function AppShell({ children, petSelector }: AppShellProps) {
   const pathname = usePathname();
   const locale = DEFAULT_LOCALE;
 
-  const isActive = (href: string) =>
-    pathname === href || (href !== "/home" && pathname.startsWith(href));
+  const navHrefs = [...primaryNav, ...moreNav].map((item) => item.href);
+  const isActive = (href: string) => isAppNavActive(pathname, href, navHrefs);
 
   const moreActive = moreNav.some((item) => isActive(item.href));
 
@@ -131,11 +133,11 @@ export function AppShell({ children, petSelector }: AppShellProps) {
             </div>
           </header>
 
-          <main id="main-content" className="flex-1 px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-8">
+          <main id="main-content" className="flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-8">
             {children}
           </main>
 
-          <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-2 py-2 backdrop-blur md:hidden">
+          <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur md:hidden">
             <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
               {primaryNav.map((item) => (
                 <NavLink

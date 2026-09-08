@@ -59,12 +59,12 @@ export function calculateBirdNutrition(input: BirdNutritionInput): BirdNutrition
   }
 
   if (input.ageMonths > 0 && input.ageMonths < 6) {
-    influencingFactors.push("Young bird — growth needs may differ");
+    influencingFactors.push("Young bird. Growth needs may differ.");
     limitations.push("Growing birds may need species-specific veterinary guidance.");
   } else if (input.ageMonths >= 84) {
     influencingFactors.push("Senior life stage");
   } else if (input.ageMonths <= 0) {
-    influencingFactors.push("Age unknown — no growth-stage feeding quantity was assumed");
+    influencingFactors.push("Age unknown. No growth-stage feeding quantity was assumed.");
   }
 
   influencingFactors.push(`Activity: ${input.activityLevel}`);

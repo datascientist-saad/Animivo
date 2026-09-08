@@ -9,7 +9,7 @@ export function MissingConfigScreen() {
       <div className="max-w-lg space-y-4 rounded-3xl border border-border bg-card p-8 shadow-sm">
         <Logo size="sm" />
         <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold">
-          Almost ready — add Supabase keys
+          Almost ready. Add Supabase keys
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
           The app can&apos;t find <code className="rounded bg-muted px-1">NEXT_PUBLIC_SUPABASE_URL</code> or{" "}

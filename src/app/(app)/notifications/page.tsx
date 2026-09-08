@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState, ErrorState, LoadingState } from "@/components/shared/page-states";
@@ -61,10 +62,13 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Notifications</h1>
-          <p className="text-sm text-muted-foreground">Stay on top of care reminders</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-1">
+          <BackLink fallbackHref="/home" />
+          <div>
+            <h1 className="text-2xl font-semibold">Notifications</h1>
+            <p className="text-sm text-muted-foreground">Stay on top of care reminders</p>
+          </div>
         </div>
         {notifications.some((n) => !n.read) && (
           <Button variant="outline" size="sm" onClick={markAllRead} className="rounded-xl">

@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
       });
       if (resetError) throw resetError;
       setSent(true);
-      toast.success("Reset link sent — check your inbox.");
+      toast.success("Reset link sent. Check your inbox.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not send reset email.");
     } finally {

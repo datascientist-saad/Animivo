@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { LogMealDialog } from "@/components/forms/log-meal-dialog";
+import { BackLink } from "@/components/shared/back-link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -59,9 +58,7 @@ export default function NutritionPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild className="rounded-xl">
-          <Link href="/health"><ArrowLeft className="h-5 w-5" /></Link>
-        </Button>
+        <BackLink fallbackHref="/health" />
         <div className="flex-1">
           <h1 className="text-xl font-semibold">Nutrition</h1>
           <p className="text-sm text-muted-foreground">Today's meals for {selectedPet.name}</p>

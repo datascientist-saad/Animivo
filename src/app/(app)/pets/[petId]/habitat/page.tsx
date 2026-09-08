@@ -61,10 +61,11 @@ export default function BirdHabitatPage() {
       <PageHeader
         title="Habitat & safety"
         description={`Educational checklist for ${selectedPet?.name ?? "your bird"}`}
+        backHref={`/pets/${petId}`}
       />
 
       <AlertBanner variant="info">
-        This checklist is educational only — not a professional home-safety certification. Discuss
+        This checklist is educational only. It is not a professional home-safety certification. Discuss
         concerns with an avian veterinarian.
       </AlertBanner>
 
@@ -79,7 +80,7 @@ export default function BirdHabitatPage() {
                 checked={!!checklist[item]}
                 onCheckedChange={(c) => setChecklist((prev) => ({ ...prev, [item]: !!c }))}
               />
-              <span>{item} — reviewed / addressed</span>
+              <span>{item}: reviewed / addressed</span>
             </label>
           ))}
           <Button onClick={save} disabled={saving} className="mt-4 w-full rounded-xl">

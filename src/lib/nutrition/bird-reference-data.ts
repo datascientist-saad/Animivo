@@ -48,7 +48,7 @@ const BASE_REFERENCE: BirdDietReference = {
   ],
   transitionWeeks: 4,
   disclaimer:
-    "This is general educational guidance based on common avian nutrition principles. Confirm portions, supplements, and transitions with an avian veterinarian — especially for medical conditions, breeding birds, or species with specialized needs.",
+    "This is general educational guidance based on common avian nutrition principles. Confirm portions, supplements, and transitions with an avian veterinarian, especially for medical conditions, breeding birds, or species with specialized needs.",
 };
 
 const SPECIES_OVERRIDES: Partial<Record<string, Partial<BirdDietReference>>> = {

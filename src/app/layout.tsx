@@ -23,7 +23,7 @@ const body = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${brand.name} — ${brand.tagline}`,
+    default: `${brand.name}: ${brand.tagline}`,
     template: `%s · ${brand.name}`,
   },
   description: brand.subtitle,
@@ -46,13 +46,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: brand.name,
-    title: `${brand.name} — ${brand.tagline}`,
+    title: `${brand.name}: ${brand.tagline}`,
     description: brand.subtitle,
     url: getSiteUrl(),
   },
   twitter: {
     card: "summary_large_image",
-    title: `${brand.name} — ${brand.tagline}`,
+    title: `${brand.name}: ${brand.tagline}`,
     description: brand.subtitle,
   },
 };

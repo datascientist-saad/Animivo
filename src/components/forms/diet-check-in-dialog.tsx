@@ -164,8 +164,8 @@ export function DietCheckInDialog({ pet, open, onOpenChange, onSuccess }: DietCh
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="yes">Yes, on track</SelectItem>
-                <SelectItem value="unsure">Unsure — would like review</SelectItem>
-                <SelectItem value="no">No — needs adjustment</SelectItem>
+                <SelectItem value="unsure">Unsure, would like a review</SelectItem>
+                <SelectItem value="no">No, needs adjustment</SelectItem>
               </SelectContent>
             </Select>
           </div>

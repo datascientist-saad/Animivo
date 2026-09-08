@@ -30,7 +30,8 @@ export default function UpgradePage() {
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader
         title="Animivo Plus"
-        description="Subscription-ready plans — billing connects when a payment provider is configured."
+        description="Subscription-ready plans. Billing connects when a payment provider is configured."
+        backHref="/settings"
       />
 
       <div className="grid gap-4 md:grid-cols-2">

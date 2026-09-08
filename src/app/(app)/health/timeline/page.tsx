@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/shared/back-link";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState, ErrorState, LoadingState } from "@/components/shared/page-states";
 import { usePet } from "@/contexts/pet-context";
@@ -109,9 +107,7 @@ export default function TimelinePage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild className="rounded-xl">
-          <Link href="/health"><ArrowLeft className="h-5 w-5" /></Link>
-        </Button>
+        <BackLink fallbackHref="/health" />
         <div>
           <h1 className="text-xl font-semibold">Timeline</h1>
           <p className="text-sm text-muted-foreground">{selectedPet.name}'s health journey</p>

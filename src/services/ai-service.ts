@@ -102,7 +102,7 @@ function answerFromData(message: string, ctx: PetAiContext): string | null {
 
   if (/weight/.test(q) && /(chang|current|how much|what)/.test(q)) {
     return ctx.pet.weight_kg != null
-      ? `${ctx.pet.name}'s most recently recorded weight is ${ctx.pet.weight_kg} kg. Weight changes can have many causes — track trends and talk with your veterinarian if you notice sudden shifts. ${brand.name} AI provides general information and does not replace veterinary care.`
+      ? `${ctx.pet.name}'s most recently recorded weight is ${ctx.pet.weight_kg} kg. Weight changes can have many causes, so track trends and talk with your veterinarian if you notice sudden shifts. ${brand.name} AI provides general information and does not replace veterinary care.`
       : `I don't see a weight recorded for ${ctx.pet.name} yet. You can add one from Health → Weight.`;
   }
 
@@ -115,7 +115,7 @@ function answerFromData(message: string, ctx: PetAiContext): string | null {
     }
     return `${ctx.pet.name}'s next recorded vaccination is ${upcoming.name}${
       upcoming.next_due_date ? ` on ${upcoming.next_due_date}` : ""
-    }. This is based on what you've logged in ${brand.name} — confirm timing with your veterinarian.`;
+    }. This is based on what you've logged in ${brand.name}. Confirm timing with your veterinarian.`;
   }
 
   if (/vaccin/.test(q) && /(recorded|have|list|what)/.test(q)) {
@@ -163,7 +163,7 @@ function fallbackResponse(message: string, ctx: PetAiContext): string {
     `Thanks for asking about ${ctx.pet.name}. Based on the profile I have, ${ctx.pet.name} is a ${
       ctx.pet.species
     }${ctx.pet.breed ? ` (${ctx.pet.breed})` : ""}.` +
-    `\n\nI can help with general care guidance using the information you've recorded — weight, vaccines, medications, meals, and symptoms.` +
+    `\n\nI can help with general care guidance using the information you've recorded: weight, vaccines, medications, meals, and symptoms.` +
     `\n\n${brand.name} AI provides general pet-care information and does not replace a veterinarian. If ${ctx.pet.name} seems unwell, contact your vet.` +
     `\n\nCould you share a bit more detail about what you'd like help with?`
   );

@@ -15,7 +15,6 @@ import {
   Utensils,
   Wind,
 } from "lucide-react";
-import { toast } from "sonner";
 import { DietDashboardCard } from "@/components/diet/diet-dashboard-card";
 import { DietCheckInDialog } from "@/components/forms/diet-check-in-dialog";
 import { AddMedicationDialog } from "@/components/forms/add-medication-dialog";
@@ -31,6 +30,7 @@ import { Progress } from "@/components/ui/progress";
 import { EmptyState, ErrorState, LoadingState } from "@/components/shared/page-states";
 import { usePet } from "@/contexts/pet-context";
 import { useUser } from "@/contexts/user-context";
+import { useCompleteCareTask } from "@/hooks/use-complete-care-task";
 import {
   calculatePetAge,
   daysUntilVaccination,
@@ -86,12 +86,12 @@ export function HomeDashboard() {
 
   const supabase = useMemo(() => createClient(), []);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
     if (!selectedPetId) {
       setLoading(false);
       return;
     }
-    setLoading(true);
+    if (!silent) setLoading(true);
     setError(null);
     try {
       const careService = new CareTaskService(supabase);
@@ -178,20 +178,15 @@ export function HomeDashboard() {
       ]
     : [];
 
-  async function completeTask(task: CareTask) {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Please sign in.");
-      const service = new CareTaskService(supabase);
-      await service.complete(task, user.id);
-      toast.success("Task marked complete.");
-      void loadData();
-    } catch (err) {
-      toast.error(toUserMessage(err));
-    }
-  }
+  const refreshQuietly = useCallback(() => {
+    void loadData({ silent: true });
+  }, [loadData]);
+
+  const { completeTask, completingIds } = useCompleteCareTask({
+    supabase,
+    setCompletions,
+    successMessage: "Task marked complete.",
+  });
 
   if (!selectedPet) {
     return (
@@ -204,7 +199,7 @@ export function HomeDashboard() {
   }
 
   if (loading) return <LoadingState message={`Loading ${selectedPet.name}'s dashboard…`} />;
-  if (error) return <ErrorState message={error} onRetry={loadData} />;
+  if (error) return <ErrorState message={error} onRetry={() => void loadData()} />;
 
   const firstName = profile?.full_name?.split(" ")[0];
   const petWeight = formatPetWeight(selectedPet);
@@ -320,8 +315,10 @@ export function HomeDashboard() {
                 >
                   <Checkbox
                     checked={task.completed}
-                    disabled={task.completed}
-                    onCheckedChange={() => !task.completed && void completeTask(task)}
+                    disabled={task.completed || completingIds.has(task.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked && !task.completed) void completeTask(task);
+                    }}
                   />
                   <div className="flex-1">
                     <p
@@ -498,19 +495,19 @@ export function HomeDashboard() {
             petId={selectedPetId}
             open={mealOpen}
             onOpenChange={setMealOpen}
-            onSuccess={loadData}
+            onSuccess={refreshQuietly}
             defaultUnit={selectedPet.food_unit}
           />
-          <AddWeightDialog petId={selectedPetId} open={weightOpen} onOpenChange={setWeightOpen} onSuccess={loadData} />
+          <AddWeightDialog petId={selectedPetId} open={weightOpen} onOpenChange={setWeightOpen} onSuccess={refreshQuietly} />
           <AddMedicationDialog
             petId={selectedPetId}
             petName={selectedPet.name}
             open={medOpen}
             onOpenChange={setMedOpen}
-            onSuccess={loadData}
+            onSuccess={refreshQuietly}
           />
-          <AddRecordDialog petId={selectedPetId} open={recordOpen} onOpenChange={setRecordOpen} onSuccess={loadData} />
-          <DietCheckInDialog pet={selectedPet} open={checkInOpen} onOpenChange={setCheckInOpen} onSuccess={loadData} />
+          <AddRecordDialog petId={selectedPetId} open={recordOpen} onOpenChange={setRecordOpen} onSuccess={refreshQuietly} />
+          <DietCheckInDialog pet={selectedPet} open={checkInOpen} onOpenChange={setCheckInOpen} onSuccess={refreshQuietly} />
         </>
       ) : null}
     </div>

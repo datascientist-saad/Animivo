@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
 import { AddCareTaskDialog } from "@/components/forms/add-care-task-dialog";
 import { Badge } from "@/components/ui/badge";
 import { BackLink } from "@/components/shared/back-link";
@@ -10,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EmptyState, ErrorState, LoadingState } from "@/components/shared/page-states";
 import { usePet } from "@/contexts/pet-context";
+import { useCompleteCareTask } from "@/hooks/use-complete-care-task";
 import { getTodaysCareTasks } from "@/lib/calculations";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
@@ -36,9 +36,9 @@ export default function CarePage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const supabase = useMemo(() => createClient(), []);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
     if (!selectedPetId) return;
-    setLoading(true);
+    if (!silent) setLoading(true);
     setError(null);
     try {
       const service = new CareTaskService(supabase);
@@ -73,18 +73,15 @@ export default function CarePage() {
 
   const todayTasks = useMemo(() => getTodaysCareTasks(tasks, completions), [tasks, completions]);
 
-  async function completeTask(task: CareTask) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Please sign in.");
-      const service = new CareTaskService(supabase);
-      await service.complete(task, user.id);
-      toast.success("Done! Great job taking care of your pet.");
-      void loadData();
-    } catch (err) {
-      toast.error(toUserMessage(err));
-    }
-  }
+  const refreshQuietly = useCallback(() => {
+    void loadData({ silent: true });
+  }, [loadData]);
+
+  const { completeTask, completingIds } = useCompleteCareTask({
+    supabase,
+    setCompletions,
+    successMessage: "Done! Great job taking care of your pet.",
+  });
 
   if (!selectedPet) {
     return <EmptyState title="Select a pet" description="Choose a pet to view care tasks." />;
@@ -106,7 +103,7 @@ export default function CarePage() {
       {loading ? (
         <LoadingState />
       ) : error ? (
-        <ErrorState message={error} onRetry={loadData} />
+        <ErrorState message={error} onRetry={() => void loadData()} />
       ) : tasks.length === 0 ? (
         <EmptyState
           title="No care tasks yet"
@@ -124,8 +121,10 @@ export default function CarePage() {
                 <label key={task.id} className="flex items-center gap-3 rounded-xl bg-secondary/50 p-3 cursor-pointer">
                   <Checkbox
                     checked={task.completed}
-                    disabled={task.completed}
-                    onCheckedChange={() => !task.completed && void completeTask(task)}
+                    disabled={task.completed || completingIds.has(task.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked && !task.completed) void completeTask(task);
+                    }}
                   />
                   <span className={`text-sm ${task.completed ? "line-through text-muted-foreground" : ""}`}>
                     {task.title}
@@ -162,7 +161,7 @@ export default function CarePage() {
       )}
 
       {selectedPetId && (
-        <AddCareTaskDialog petId={selectedPetId} open={dialogOpen} onOpenChange={setDialogOpen} onSuccess={loadData} />
+        <AddCareTaskDialog petId={selectedPetId} open={dialogOpen} onOpenChange={setDialogOpen} onSuccess={refreshQuietly} />
       )}
     </div>
   );

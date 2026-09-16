@@ -1,3 +1,5 @@
+import { CONNECTION_MESSAGE, isNetworkError } from "@/lib/native/network";
+
 export class AppError extends Error {
   readonly code: string;
   readonly status: number;
@@ -56,6 +58,9 @@ function supabaseErrorMessage(error: unknown): string | null {
 }
 
 export function toUserMessage(error: unknown, fallback = "Something went wrong. Please try again."): string {
+  if (isNetworkError(error)) {
+    return CONNECTION_MESSAGE;
+  }
   const mapped = mappedConstraintMessage(error);
   if (mapped) return mapped;
   if (error instanceof AppError) {

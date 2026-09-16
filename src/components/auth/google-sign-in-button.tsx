@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { sanitizeNextPath } from "@/lib/auth-redirect";
+import { getAuthCallbackUrl } from "@/lib/native/auth-url";
+import { isNativeRuntime } from "@/lib/native/platform";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
 
@@ -20,11 +21,13 @@ export function GoogleSignInButton({
     setLoading(true);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
-      const { error } = await supabase.auth.signInWithOAuth({
+      const redirectTo = getAuthCallbackUrl(nextPath);
+      const native = isNativeRuntime();
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(sanitizeNextPath(nextPath))}`,
+          redirectTo,
+          skipBrowserRedirect: native,
           queryParams: {
             access_type: "offline",
             prompt: "consent",
@@ -32,6 +35,10 @@ export function GoogleSignInButton({
         },
       });
       if (error) throw error;
+      if (native && data?.url) {
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.open({ url: data.url });
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       if (/provider is not enabled|unsupported provider/i.test(message)) {

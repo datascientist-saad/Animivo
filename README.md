@@ -192,6 +192,8 @@ npm test
 
 - `docs/DOMAIN_SAFETY.md` — deterministic vs AI boundaries
 - `docs/ANIMIVO_ROADMAP.md` — implemented, prepared, and planned features
+- `docs/MOBILE_RELEASE.md` — Capacitor Android/iOS, signing, deep links, store process
+- `docs/APP_STORE_CHECKLIST.md` — Apple App Store and Google Play checklists
 
 ## License
 

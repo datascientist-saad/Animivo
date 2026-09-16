@@ -89,9 +89,9 @@ export function AppShell({ children, petSelector }: AppShellProps) {
   const moreActive = moreNav.some((item) => isActive(item.href));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <SkipLink />
-      <div className="mx-auto flex min-h-screen max-w-7xl">
+      <div className="mx-auto flex min-h-dvh max-w-7xl">
         <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card/50 p-5 md:flex">
           <Logo className="mb-2" size="sm" priority />
           {petSelector ? <div className="mb-6 mt-4">{petSelector}</div> : null}
@@ -125,19 +125,19 @@ export function AppShell({ children, petSelector }: AppShellProps) {
           </div>
         </aside>
 
-        <div className="flex min-h-screen flex-1 flex-col">
-          <header className="sticky top-0 z-30 border-b border-border bg-background/90 px-4 py-3 backdrop-blur md:hidden">
+        <div className="flex min-h-dvh flex-1 flex-col">
+          <header className="sticky top-0 z-30 border-b border-border bg-background/90 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur md:hidden">
             <div className="flex items-center justify-between gap-3">
               <Logo size="sm" />
               {petSelector}
             </div>
           </header>
 
-          <main id="main-content" className="flex-1 px-4 py-6 pb-28 md:px-8 md:py-8 md:pb-8">
+          <main id="main-content" className="flex-1 px-4 py-6 pb-[calc(7rem+env(safe-area-inset-bottom))] md:px-8 md:py-8 md:pb-8">
             {children}
           </main>
 
-          <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur md:hidden">
+          <nav className="app-tab-bar fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur md:hidden">
             <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
               {primaryNav.map((item) => (
                 <NavLink
@@ -162,7 +162,7 @@ export function AppShell({ children, petSelector }: AppShellProps) {
                     <span>{t(locale, "nav.more")}</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="bottom" className="rounded-t-3xl">
+                <SheetContent side="bottom" className="rounded-t-3xl pb-[max(1.5rem,env(safe-area-inset-bottom))]">
                   <SheetHeader>
                     <SheetTitle>{brand.name}</SheetTitle>
                   </SheetHeader>

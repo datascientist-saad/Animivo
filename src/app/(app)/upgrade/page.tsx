@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnalyticsEvents } from "@/lib/analytics/events";
 import { PLAN_DEFINITIONS } from "@/lib/entitlements/plans";
+import { getUpgradeCta } from "@/lib/billing/provider";
 import { brand } from "@/lib/brand";
 import { createClient } from "@/lib/supabase/client";
 import { AnalyticsService } from "@/services/notification-service";
@@ -15,6 +16,11 @@ import { AnalyticsService } from "@/services/notification-service";
 export default function UpgradePage() {
   const plans = [PLAN_DEFINITIONS.free, PLAN_DEFINITIONS.plus];
   const supabase = useMemo(() => createClient(), []);
+  const [upgradeCta, setUpgradeCta] = useState(() => getUpgradeCta("web"));
+
+  useEffect(() => {
+    setUpgradeCta(getUpgradeCta());
+  }, []);
 
   useEffect(() => {
     void (async () => {
@@ -57,9 +63,12 @@ export default function UpgradePage() {
                 )}
               </ul>
               {plan.id === "plus" ? (
-                <Button disabled className="w-full rounded-xl">
-                  Connect billing to upgrade
-                </Button>
+                <div className="space-y-2">
+                  <Button disabled className="w-full rounded-xl">
+                    {upgradeCta.label}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">{upgradeCta.hint}</p>
+                </div>
               ) : (
                 <Button asChild variant="outline" className="w-full rounded-xl">
                   <Link href="/home">Current plan</Link>
@@ -71,8 +80,8 @@ export default function UpgradePage() {
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        {brand.name} pilot users keep access during development. Payments are not processed until a
-        server-side billing adapter is connected.
+        {brand.name} maps every successful purchase to the existing Free / Animivo Plus entitlement
+        in your profile. {upgradeCta.hint}
       </p>
     </div>
   );

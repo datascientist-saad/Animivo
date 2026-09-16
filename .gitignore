@@ -41,5 +41,26 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Capacitor / native build output (commit the projects, not artifacts)
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/keystore.properties
+android/app/release/
+android/keystore/
+*.jks
+*.keystore
+!debug.keystore
+ios/App/Pods/
+android/app/src/main/assets/public/
+ios/App/App/public/
+ios/DerivedData/
+xcuserdata/
+*.xcuserstate
+*.p12
+*.mobileprovision
+google-services.json
+
 AGENTS.md
 CLAUDE.md

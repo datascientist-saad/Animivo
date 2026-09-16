@@ -16,6 +16,7 @@ import { trackEvent } from "@/lib/analytics/track";
 import { hasOnboardingDraft } from "@/lib/onboarding-draft";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
 import { brand } from "@/lib/brand";
+import { getAuthCallbackUrl } from "@/lib/native/auth-url";
 import { createClient } from "@/lib/supabase/client";
 import { signUpSchema } from "@/lib/validations";
 
@@ -74,13 +75,12 @@ export default function SignupForm() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
       const { data, error } = await supabase.auth.signUp({
         email: parsed.data.email,
         password: parsed.data.password,
         options: {
           data: { full_name: parsed.data.fullName },
-          emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+          emailRedirectTo: getAuthCallbackUrl(next),
         },
       });
 

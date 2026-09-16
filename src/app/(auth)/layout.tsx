@@ -6,7 +6,7 @@ import { brand } from "@/lib/brand";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <ConfigGate>
-      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
+      <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4 py-12 pt-[max(3rem,env(safe-area-inset-top))] pb-[max(3rem,env(safe-area-inset-bottom))]">
         <div className="mb-8 text-center">
           <h1 className="sr-only">{brand.name}</h1>
           <Logo className="justify-center" showTagline priority />

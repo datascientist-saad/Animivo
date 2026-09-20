@@ -11,7 +11,9 @@ const config: CapacitorConfig = {
   backgroundColor: "#faf7f2",
   loggingBehavior: "debug",
   server: {
-    url: "https://animivo.vercel.app",
+    // Must stay on the Vercel alias. Do not add the unowned animivo.app host:
+    // Vercel will 307 there and the WebView goes blank (SSL/404).
+    url: serverUrl,
     cleartext: false,
     errorPath: "offline.html",
     allowNavigation: [

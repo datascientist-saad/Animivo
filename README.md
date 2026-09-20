@@ -162,9 +162,10 @@ Food catalogue seed is kept separate and is not auto-run in production.
 
 1. Push to GitHub and import in Vercel.
 2. Add environment variables. Production `NEXT_PUBLIC_APP_URL` is `https://animivo.vercel.app`.
-3. Update Supabase Auth redirect URLs to the hosted origin above.
-4. Apply `20260831000000_animivo_expansion.sql` if not yet applied.
-5. Redeploy.
+3. **Domains:** do **not** attach `animivo.app`. That host is not ours. If it is listed, Vercel 307-redirects `https://animivo.vercel.app` there and the Capacitor WebView goes blank. Production domain must stay `animivo.vercel.app`.
+4. Update Supabase Auth redirect URLs to the hosted origin above.
+5. Apply `20260831000000_animivo_expansion.sql` if not yet applied.
+6. Redeploy. Confirm `curl -sI https://animivo.vercel.app/` does not `Location` to the unowned apex hostname.
 
 ## Testing
 

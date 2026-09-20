@@ -1,4 +1,5 @@
 import { brand } from "@/lib/brand";
+import { NATIVE_PRODUCTION_ORIGIN } from "@/lib/native/constants";
 import { supabasePublicDefaults } from "@/lib/supabase/public-config";
 
 /** @type {import('next').NextConfig} */
@@ -19,7 +20,7 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_SUPABASE_URL || supabasePublicDefaults.url,
     NEXT_PUBLIC_SUPABASE_ANON_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || supabasePublicDefaults.anonKey,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "https://animivo.app",
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || NATIVE_PRODUCTION_ORIGIN,
   },
   async headers() {
     return [

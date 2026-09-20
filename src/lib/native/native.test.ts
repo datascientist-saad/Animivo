@@ -11,8 +11,15 @@ describe("native deep links", () => {
   });
 
   it("parses https auth callbacks", () => {
-    const parsed = parseNativeDeepLink("https://animivo.app/auth/callback?code=xyz&next=/reset-password");
+    const parsed = parseNativeDeepLink(
+      "https://animivo.vercel.app/auth/callback?code=xyz&next=/reset-password"
+    );
     expect(parsed).toMatchObject({ kind: "auth-callback", code: "xyz", next: "/reset-password" });
+  });
+
+  it("parses the native reset-password scheme", () => {
+    const parsed = parseNativeDeepLink("animivo://reset-password");
+    expect(parsed).toEqual({ kind: "app-path", path: "/reset-password" });
   });
 
   it("parses caregiver invite links", () => {

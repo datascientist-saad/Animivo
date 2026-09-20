@@ -74,8 +74,20 @@ Never expose the service role key to the browser.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. In **Authentication → URL configuration**, add:
-   - Site URL: `http://localhost:3000` (and your production URL)
-   - Redirect URLs: `/auth/callback`, reset-password URLs
+
+```text
+Site URL:
+https://animivo.vercel.app
+
+Redirect allow list:
+https://animivo.vercel.app/auth/callback
+https://animivo.vercel.app/reset-password
+animivo://auth/callback
+animivo://reset-password
+```
+
+   Local development should also allow `http://localhost:3000/auth/callback`.
+   A future custom domain can replace `animivo.vercel.app` later; we do not own `animivo.app`.
 3. Enable **Email** provider (password login).
 4. Apply migrations in order:
 
@@ -149,8 +161,8 @@ Food catalogue seed is kept separate and is not auto-run in production.
 ## Deployment to Vercel
 
 1. Push to GitHub and import in Vercel.
-2. Add environment variables (including `NEXT_PUBLIC_APP_URL` for production).
-3. Update Supabase Auth redirect URLs to the production domain.
+2. Add environment variables. Production `NEXT_PUBLIC_APP_URL` is `https://animivo.vercel.app`.
+3. Update Supabase Auth redirect URLs to the hosted origin above.
 4. Apply `20260831000000_animivo_expansion.sql` if not yet applied.
 5. Redeploy.
 

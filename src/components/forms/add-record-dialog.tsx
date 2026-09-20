@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
+import { isNativeRuntime } from "@/lib/native/platform";
+import { pickImageFromNative } from "@/lib/native/pick-image";
 import { medicalRecordSchema } from "@/lib/validations";
 import { HealthRecordService } from "@/services/health-record-service";
 import type { MedicalRecordType } from "@/types/database";
@@ -180,6 +182,28 @@ export function AddRecordDialog({ petId, open, onOpenChange, onSuccess }: AddRec
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               className="rounded-xl"
             />
+            <Button
+              type="button"
+              variant="secondary"
+              className="rounded-xl"
+              onClick={async () => {
+                try {
+                  if (isNativeRuntime()) {
+                    const photo = await pickImageFromNative("prompt");
+                    if (photo) setFile(photo);
+                    return;
+                  }
+                  document.getElementById("record_file")?.click();
+                } catch (err) {
+                  const message = err instanceof Error ? err.message : "";
+                  if (/cancel/i.test(message)) return;
+                  toast.error(toUserMessage(err, "Could not open the camera or photo library."));
+                }
+              }}
+            >
+              Take photo or choose image
+            </Button>
+            {file ? <p className="text-xs text-muted-foreground">{file.name}</p> : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="record_notes">Notes (optional)</Label>

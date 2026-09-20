@@ -20,4 +20,9 @@ describe("public routes", () => {
     expect(isPrivateAppPath("/home")).toBe(true);
     expect(isPrivateAppPath("/setup/complete")).toBe(true);
   });
+
+  it("keeps well-known app-link files public", () => {
+    expect(isPublicPath("/.well-known/apple-app-site-association")).toBe(true);
+    expect(isPublicPath("/.well-known/assetlinks.json")).toBe(true);
+  });
 });

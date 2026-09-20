@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Animivo</string>
+    <string name="title_activity_main">Animivo</string>
+    <string name="package_name">ai.animivo.app</string>
+    <string name="custom_url_scheme">ai.animivo.app</string>
+</resources>

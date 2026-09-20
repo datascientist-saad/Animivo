@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { PetAvatar } from "@/components/pets/pet-avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { isNativeRuntime } from "@/lib/native/platform";
+import { pickImageFromNative } from "@/lib/native/pick-image";
 import { uploadPetPhoto } from "@/lib/pet-photo";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
@@ -68,6 +70,22 @@ export function PetPhotoField({
     }
   }
 
+  async function choosePhoto(kind: "prompt" | "camera" | "photos" = "prompt") {
+    if (disabled || uploading) return;
+    if (isNativeRuntime()) {
+      try {
+        const file = await pickImageFromNative(kind);
+        await handleFile(file);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "";
+        if (/cancel/i.test(message)) return;
+        toast.error(toUserMessage(err, "Could not open the camera or photo library."));
+      }
+      return;
+    }
+    inputRef.current?.click();
+  }
+
   async function removePhoto() {
     if (disabled) return;
     setUploading(true);
@@ -99,7 +117,7 @@ export function PetPhotoField({
             size="sm"
             className="rounded-xl"
             disabled={disabled || uploading}
-            onClick={() => inputRef.current?.click()}
+            onClick={() => void choosePhoto("prompt")}
           >
             <Camera className="mr-2 size-4" />
             {displayUrl ? "Change photo" : "Add photo"}
@@ -149,6 +167,21 @@ export function PetPhotoPicker({
   const inputRef = useRef<HTMLInputElement>(null);
   const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
 
+  async function choosePhoto() {
+    if (isNativeRuntime()) {
+      try {
+        const next = await pickImageFromNative("prompt");
+        if (next) onFileChange(next);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "";
+        if (/cancel/i.test(message)) return;
+        toast.error(toUserMessage(err, "Could not open the camera or photo library."));
+      }
+      return;
+    }
+    inputRef.current?.click();
+  }
+
   return (
     <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
       <PetAvatar name={name || "Pet"} species={species} imageUrl={preview} size="lg" />
@@ -163,7 +196,7 @@ export function PetPhotoPicker({
             variant="secondary"
             size="sm"
             className="rounded-xl"
-            onClick={() => inputRef.current?.click()}
+            onClick={() => void choosePhoto()}
           >
             <Camera className="mr-2 size-4" />
             {file ? "Change photo" : "Add photo"}

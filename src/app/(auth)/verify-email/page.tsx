@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingState } from "@/components/shared/loading-state";
 import { sanitizeNextPath } from "@/lib/auth-redirect";
+import { getAuthCallbackUrl } from "@/lib/native/auth-url";
 import { createClient } from "@/lib/supabase/client";
 
 function VerifyEmailContent() {
@@ -24,11 +25,10 @@ function VerifyEmailContent() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
       const { error } = await supabase.auth.resend({
         type: "signup",
         email,
-        options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` },
+        options: { emailRedirectTo: getAuthCallbackUrl(next) },
       });
       if (error) throw error;
       toast.success("Confirmation email sent. Check your inbox.");

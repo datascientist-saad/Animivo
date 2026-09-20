@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -136,6 +137,26 @@ export default function SettingsPage() {
         <CardContent className="space-y-3">
           <p className="text-sm">{profile?.email}</p>
           <SignOutButton fullWidth className="sm:w-auto" />
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-2xl">
+        <CardHeader>
+          <CardTitle className="text-base">About</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          <Link href="/privacy" className="block rounded-xl px-1 py-2 text-primary hover:underline">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="block rounded-xl px-1 py-2 text-primary hover:underline">
+            Terms of Service
+          </Link>
+          <Link href="/ai-disclaimer" className="block rounded-xl px-1 py-2 text-primary hover:underline">
+            AI Disclaimer
+          </Link>
+          <Link href="/upgrade" className="block rounded-xl px-1 py-2 text-primary hover:underline">
+            Animivo Plus
+          </Link>
         </CardContent>
       </Card>
 

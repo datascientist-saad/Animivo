@@ -9,6 +9,7 @@ export const PUBLIC_PATH_PREFIXES = [
   "/invite",
   "/robots.txt",
   "/sitemap.xml",
+  "/.well-known",
 ] as const;
 
 export const AUTH_PATH_PREFIXES = [

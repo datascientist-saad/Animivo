@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { NativeRuntimeRoot } from "@/components/native/native-runtime-root";
 import { Toaster } from "@/components/ui/sonner";
 import { brand } from "@/lib/brand";
 import { getSiteUrl } from "@/lib/site";
@@ -61,6 +62,8 @@ export const viewport: Viewport = {
   themeColor: brand.colors.primary,
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
@@ -71,6 +74,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${display.variable} ${body.variable} min-h-dvh bg-background font-sans text-foreground antialiased`}>
+        <NativeRuntimeRoot />
         {children}
         <Toaster position="top-center" richColors closeButton />
         <Analytics />

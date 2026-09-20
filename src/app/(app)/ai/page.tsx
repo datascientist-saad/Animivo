@@ -10,6 +10,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmptyState, LoadingState } from "@/components/shared/page-states";
+import { CONNECTION_MESSAGE, isBrowserOffline } from "@/lib/native/network";
+import { toUserMessage } from "@/lib/errors";
 import { brand } from "@/lib/brand";
 import { usePet } from "@/contexts/pet-context";
 
@@ -41,6 +43,10 @@ export default function AiPage() {
 
   async function sendMessage(text: string) {
     if (!text.trim() || !selectedPet || sending) return;
+    if (isBrowserOffline()) {
+      toast.error(CONNECTION_MESSAGE);
+      return;
+    }
     const userMsg = text.trim();
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
@@ -55,12 +61,13 @@ export default function AiPage() {
           conversationId,
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
       setConversationId(data.conversationId);
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't send message.");
+      setMessages((prev) => prev.filter((message, index) => !(index === prev.length - 1 && message.role === "user" && message.content === userMsg)));
+      toast.error(toUserMessage(err, "Couldn't send that message. Nothing was saved."));
     } finally {
       setSending(false);
     }

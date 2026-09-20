@@ -6,7 +6,7 @@ import nextPlugin from "@next/eslint-plugin-next";
 /** @type {import('eslint').Linter.Config[]} */
 const eslintConfig = [
   {
-    ignores: [".next/**", "node_modules/**", "supabase/**", "public/**", "scripts/**"],
+    ignores: [".next/**", "node_modules/**", "supabase/**", "public/**", "scripts/**", "android/**", "ios/**", "native-www/**", "resources/**"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getAuthCallbackUrl } from "@/lib/native/auth-url";
 import { createClient } from "@/lib/supabase/client";
 
 const forgotPasswordSchema = z.object({
@@ -33,9 +34,8 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-        redirectTo: `${origin}/auth/callback?next=/reset-password`,
+        redirectTo: getAuthCallbackUrl("/reset-password"),
       });
       if (resetError) throw resetError;
       setSent(true);

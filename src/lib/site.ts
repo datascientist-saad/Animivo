@@ -1,9 +1,13 @@
 /**
  * Canonical public site URL. Prefer NEXT_PUBLIC_APP_URL.
- * Never treat Vercel preview hostnames as the production canonical.
+ * Current hosted production is animivo.vercel.app. A future custom domain
+ * can be introduced later through a separate migration.
+ * Never treat unique Vercel preview hostnames as the production canonical.
  */
-const PRODUCTION_FALLBACK = "https://animivo.app";
-const KNOWN_PRODUCTION_HOSTS = new Set(["animivo.app", "www.animivo.app", "animivo.vercel.app"]);
+import { NATIVE_PRODUCTION_ORIGIN } from "@/lib/native/constants";
+
+const PRODUCTION_FALLBACK = NATIVE_PRODUCTION_ORIGIN;
+const KNOWN_PRODUCTION_HOSTS = new Set(["animivo.vercel.app"]);
 
 export function getSiteUrl(): string {
   const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();

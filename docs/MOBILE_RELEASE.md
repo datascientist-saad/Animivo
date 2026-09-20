@@ -5,12 +5,12 @@ Animivo’s native apps are a Capacitor shell around the existing Next.js deploy
 - **App name:** Animivo
 - **Application / bundle ID:** `ai.animivo.app`
 - **Custom scheme:** `animivo://`
-- **Production web origin:** `https://animivo.app`
+- **Current hosted production URL:** `https://animivo.vercel.app`
 - **Capacitor:** 8.x (`@capacitor/core` / `cli` / `android` / `ios`)
 - **Android target SDK:** 36 (required by Capacitor 8 for current Play submissions)
 - **iOS display name:** Animivo
 
-Set `CAPACITOR_SERVER_URL` only when pointing a **local native build** at a specific deployed origin. Production store builds must use `https://animivo.app` (the default). Do not bake `localhost` into store binaries.
+Set `CAPACITOR_SERVER_URL` only when pointing a **local native build** at a specific deployed origin. Production store builds must use `https://animivo.vercel.app` (the default). Do not bake `localhost` into store binaries. A future custom domain can be introduced later through a separate migration. We do not own or configure `animivo.app`.
 
 ## Required environment variables
 
@@ -20,7 +20,7 @@ Set `CAPACITOR_SERVER_URL` only when pointing a **local native build** at a spec
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Public |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Public anon/publishable key only |
-| `NEXT_PUBLIC_APP_URL` | Yes | `https://animivo.app` in production |
+| `NEXT_PUBLIC_APP_URL` | Yes | `https://animivo.vercel.app` in production |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | **Server only.** Never add to a mobile env file. |
 | `OPENAI_API_KEY` | No | **Server only.** |
 | `ADMIN_EMAILS` | No | Server only |
@@ -32,53 +32,58 @@ Set `CAPACITOR_SERVER_URL` only when pointing a **local native build** at a spec
 
 | Variable | Required | Notes |
 |---|---|---|
-| `CAPACITOR_SERVER_URL` | No | Defaults to `https://animivo.app` |
+| `CAPACITOR_SERVER_URL` | No | Defaults to `https://animivo.vercel.app` |
 | Android keystore passwords | Yes for release | Keep in a secrets manager, never git |
 | Apple signing identities | Yes for release | Xcode / CI secrets only |
 
 ## Supabase Dashboard (manual)
 
-Authentication → URL configuration:
+Authentication → URL configuration (required):
 
-- **Site URL:** `https://animivo.app`
-- **Redirect URLs (allow list):**
-  - `https://animivo.app/auth/callback`
-  - `https://animivo.app/auth/callback?next=/reset-password`
-  - `https://animivo.app/reset-password`
-  - `animivo://auth/callback`
-  - `animivo://auth/callback?next=/reset-password`
-  - local: `http://localhost:3000/auth/callback`
+```text
+Site URL:
+https://animivo.vercel.app
 
-Enable Email (password) and, if used, Google. Google OAuth in the native app uses the system browser plus `animivo://auth/callback` so the PKCE verifier stays in the WebView.
+Redirect allow list:
+https://animivo.vercel.app/auth/callback
+https://animivo.vercel.app/reset-password
+animivo://auth/callback
+animivo://reset-password
+```
+
+Also allow local development: `http://localhost:3000/auth/callback`. Optional extras that already work in the app: `https://animivo.vercel.app/auth/callback?next=/reset-password` and `animivo://auth/callback?next=/reset-password`.
+
+Enable Email (password) and, if used, Google. Google OAuth in the native app uses the system browser plus `animivo://auth/callback` so the PKCE verifier stays in the WebView. A future custom domain can replace these HTTPS origins later through a separate migration.
 
 ## Deep links / Universal Links / App Links
 
 | Link | Purpose |
 |---|---|
 | `animivo://auth/callback` | Native OAuth / email-code return |
-| `https://animivo.app/auth/callback` | Web + Universal/App Link return |
+| `animivo://reset-password` | Native password-reset return |
+| `https://animivo.vercel.app/auth/callback` | Web + Universal/App Link return |
 | `animivo://invite/{token}` | Caregiver invite |
-| `https://animivo.app/invite/{token}` | Invite opened from email |
+| `https://animivo.vercel.app/invite/{token}` | Invite opened from email |
 
 Well-known files are served by Next.js:
 
-- `https://animivo.app/.well-known/apple-app-site-association`
-- `https://animivo.app/.well-known/assetlinks.json`
+- `https://animivo.vercel.app/.well-known/apple-app-site-association`
+- `https://animivo.vercel.app/.well-known/assetlinks.json`
 
 Replace `TEAMID` and `REPLACE_WITH_PLAY_APP_SIGNING_CERT_SHA256` via the public env vars above, then redeploy Vercel.
 
 ### Apple Universal Links
 
 1. Apple Developer → Identifiers → `ai.animivo.app` → enable Associated Domains.
-2. Xcode Signing & Capabilities → Associated Domains → `applinks:animivo.app`.
-3. Confirm AASA is reachable **without redirects** at `https://animivo.app/.well-known/apple-app-site-association`.
+2. Xcode Signing & Capabilities → Associated Domains → `applinks:animivo.vercel.app`.
+3. Confirm AASA is reachable **without redirects** at `https://animivo.vercel.app/.well-known/apple-app-site-association`.
 
 ### Android App Links
 
 1. Play Console → App integrity → App signing → copy SHA-256.
 2. Set `NEXT_PUBLIC_ANDROID_SHA256_CERTS` and redeploy.
-3. Confirm `https://animivo.app/.well-known/assetlinks.json`.
-4. The AndroidManifest intent-filter uses `android:autoVerify="true"` for `https://animivo.app`.
+3. Confirm `https://animivo.vercel.app/.well-known/assetlinks.json`.
+4. The AndroidManifest intent-filter uses `android:autoVerify="true"` for `https://animivo.vercel.app`.
 
 ## Permissions
 
@@ -214,8 +219,8 @@ Successful future purchases must write the same entitlement fields. Do not mark 
 
 ## Security
 
-- Native bundles load `https://animivo.app`. They never receive `OPENAI_API_KEY` or `SUPABASE_SERVICE_ROLE_KEY`.
-- Session cookies remain first-party on `animivo.app` for email/password. OAuth PKCE verifier stays in WebView storage.
+- Native bundles load `https://animivo.vercel.app`. They never receive `OPENAI_API_KEY` or `SUPABASE_SERVICE_ROLE_KEY`.
+- Session cookies remain first-party on `animivo.vercel.app` for email/password. OAuth PKCE verifier stays in WebView storage.
 - RLS is unchanged.
 - Account deletion uses the existing `POST /api/account/delete` route (service role on the server only).
 

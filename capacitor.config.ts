@@ -15,8 +15,6 @@ const config: CapacitorConfig = {
     cleartext: false,
     errorPath: "offline.html",
     allowNavigation: [
-      "animivo.app",
-      "www.animivo.app",
       "animivo.vercel.app",
       "*.supabase.co",
       "accounts.google.com",

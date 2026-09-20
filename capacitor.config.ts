@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
   backgroundColor: "#faf7f2",
   loggingBehavior: "debug",
   server: {
-    url: serverUrl,
+    url: "https://animivo.vercel.app",
     cleartext: false,
     errorPath: "offline.html",
     allowNavigation: [

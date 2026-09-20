@@ -68,6 +68,17 @@ describe("hosted production origin", () => {
     }
   });
 
+  it("ignores NEXT_PUBLIC_APP_URL when it points at the unowned apex hostname", () => {
+    const previous = process.env.NEXT_PUBLIC_APP_URL;
+    process.env.NEXT_PUBLIC_APP_URL = FORBIDDEN_HOSTED_ORIGIN;
+    try {
+      expect(getSiteUrl()).toBe("https://animivo.vercel.app");
+    } finally {
+      if (previous === undefined) delete process.env.NEXT_PUBLIC_APP_URL;
+      else process.env.NEXT_PUBLIC_APP_URL = previous;
+    }
+  });
+
   it("does not hardcode https://animivo.app in active code or production documentation", () => {
     const hits: string[] = [];
     for (const file of walk(process.cwd())) {

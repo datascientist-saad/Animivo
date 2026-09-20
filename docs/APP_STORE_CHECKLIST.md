@@ -5,6 +5,8 @@ Use with `docs/MOBILE_RELEASE.md`. Tick items only after they are actually done.
 ## Shared (do before either store)
 
 - [ ] Production Vercel deploy of this branch is live at `https://animivo.vercel.app`
+- [ ] Vercel **Settings → Domains** does **not** list `animivo.app` (that 307 blanks the native WebView)
+- [ ] `curl -sI https://animivo.vercel.app/` does not redirect to the unowned apex hostname
 - [ ] `NEXT_PUBLIC_APP_URL=https://animivo.vercel.app`
 - [ ] `OPENAI_API_KEY` and `SUPABASE_SERVICE_ROLE_KEY` exist only on Vercel (not in the git repo, not in the Android/iOS project)
 - [ ] Supabase redirect URLs include `https://animivo.vercel.app/auth/callback`, `https://animivo.vercel.app/reset-password`, `animivo://auth/callback`, and `animivo://reset-password`

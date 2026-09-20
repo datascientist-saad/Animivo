@@ -12,6 +12,27 @@ Animivo’s native apps are a Capacitor shell around the existing Next.js deploy
 
 Set `CAPACITOR_SERVER_URL` only when pointing a **local native build** at a specific deployed origin. Production store builds must use `https://animivo.vercel.app` (the default). Do not bake `localhost` into store binaries. A future custom domain can be introduced later through a separate migration. We do not own or configure `animivo.app`.
 
+## Blank native WebView (Vercel domain redirect)
+
+If the Android/iOS shell opens and immediately goes blank, or Chrome/WebView shows the unowned `animivo.app` hostname, the native URL is not the bug. Vercel is 307-redirecting `https://animivo.vercel.app` to that hostname. `animivo.app` is not ours (Railway 404, broken TLS), so the WebView dies.
+
+Fix this in the Vercel dashboard — code cannot disable a platform alias redirect:
+
+1. Vercel → Project **animivo** → **Settings → Domains**.
+2. Remove `animivo.app` and `www.animivo.app` if they are listed.
+3. Keep **`animivo.vercel.app` as the production domain**. Do not enable “redirect `.vercel.app` to custom domain”.
+4. Set `NEXT_PUBLIC_APP_URL=https://animivo.vercel.app` (never the unowned apex host).
+5. Redeploy Production.
+6. Confirm in a terminal:
+
+```bash
+curl -sI https://animivo.vercel.app/
+```
+
+The response must be **200/302/307 on the same host** (or a path on `animivo.vercel.app`). It must **not** send `Location: https://` + the unowned apex hostname.
+
+7. Rebuild the native app (`npx cap sync` then run/archive). An old binary will keep following the 307 until Vercel stops issuing it.
+
 ## Required environment variables
 
 ### Vercel (web + the origin the native WebView loads)

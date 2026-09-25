@@ -3,6 +3,7 @@ import { sanitizeNextPath } from "./auth-redirect";
 import {
   buildDietPreviewFromDraft,
   draftToDietInput,
+  hasPendingOnboardingDraft,
   loadOnboardingDraft,
   saveOnboardingDraft,
   clearOnboardingDraft,
@@ -65,6 +66,12 @@ describe("preview to signup conversion", () => {
     expect(restored?.weight_value).toBe("12");
     expect(restored?.life_stage).toBe("adult");
     expect(restored?.step).toBe("preview");
+    expect(hasPendingOnboardingDraft()).toBe(true);
+  });
+
+  it("does not treat an empty draft as ready to transfer", () => {
+    clearOnboardingDraft();
+    expect(hasPendingOnboardingDraft()).toBe(false);
   });
 
   it("uses a safe signup redirect without putting pet details in the URL", () => {
@@ -123,6 +130,44 @@ describe("preview to signup conversion", () => {
     expect(first.petName).toBe("Maple");
     expect(second.petName).toBe("Maple");
     expect(created.length).toBeLessThanOrEqual(1);
+    expect(first.petId).toBe("pet-1");
+  });
+
+  it("does not mark a transfer complete when the saved pet is not owned by the user", async () => {
+    const pets: Array<{ id: string; name: string; owner_id: string; role?: string }> = [];
+    const chain = (table: string) => {
+      const api: Record<string, unknown> = {
+        then: (resolve: (value: { data: unknown; error: null }) => unknown) =>
+          resolve({ data: table === "pets" ? pets : [], error: null }),
+      };
+      const self = () => api;
+      api.select = self;
+      api.eq = self;
+      api.neq = self;
+      api.order = self;
+      api.limit = self;
+      api.maybeSingle = async () => ({
+        data: pets[0] ? { ...pets[0], owner_id: "someone-else" } : null,
+        error: null,
+      });
+      api.single = async () => ({ data: pets[0] ?? { id: "pet-1", name: "Maple" }, error: null });
+      api.upsert = async () => ({ error: null });
+      api.insert = (row: { name?: string }) => {
+        if (table === "pets" && row.name) {
+          pets.push({ id: "pet-1", name: row.name, owner_id: "user-1", role: "owner" });
+        }
+        return api;
+      };
+      api.update = self;
+      api.delete = self;
+      return api;
+    };
+
+    const supabase = { from: (table: string) => chain(table) };
+    const user = { id: "user-1", email: "owner@example.com", user_metadata: { full_name: "Owner" } };
+    await expect(transferOnboardingDraft(supabase as never, user as never, completeDraft())).rejects.toThrow(
+      /not saved to your account/i
+    );
   });
 });
 

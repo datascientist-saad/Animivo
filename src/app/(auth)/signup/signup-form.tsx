@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { AnalyticsEvents } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/track";
-import { hasOnboardingDraft } from "@/lib/onboarding-draft";
+import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
 import { brand } from "@/lib/brand";
 import { getAuthCallbackUrl } from "@/lib/native/auth-url";
@@ -41,7 +41,7 @@ export default function SignupForm() {
 
   useEffect(() => {
     trackEvent(AnalyticsEvents.SIGNUP_STARTED, { source: "signup_page" });
-    if (!searchParams.get("next") && hasOnboardingDraft()) {
+    if (!searchParams.get("next") && hasPendingOnboardingDraft()) {
       setNext("/setup/complete");
     }
   }, [searchParams]);
@@ -91,12 +91,12 @@ export default function SignupForm() {
       if (data.session) {
         toast.success(`Welcome to ${brand.name}!`);
         router.replace(
-          hasOnboardingDraft()
+          hasPendingOnboardingDraft()
             ? "/setup/complete"
             : resolvePostAuthPath(next, {
                 hasNoPets: true,
                 hasIncompleteOnboarding: true,
-                hasPendingOnboardingDraft: hasOnboardingDraft(),
+                hasPendingOnboardingDraft: hasPendingOnboardingDraft(),
               })
         );
         router.refresh();

@@ -86,6 +86,8 @@ animivo://auth/callback
 animivo://reset-password
 ```
 
+   Native Google sign-in also uses `https://animivo.vercel.app/auth/callback?native=1`, which bounces to `animivo://auth/callback` so the session is created inside the app WebView.
+
    Local development should also allow `http://localhost:3000/auth/callback`.
    A future custom domain can replace `animivo.vercel.app` later; we do not own `animivo.app`.
 3. Enable **Email** provider (password login).

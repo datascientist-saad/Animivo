@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getAuthCallbackUrl } from "@/lib/native/auth-url";
 import { isNativeRuntime } from "@/lib/native/platform";
+import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
 
@@ -21,8 +22,15 @@ export function GoogleSignInButton({
     setLoading(true);
     try {
       const supabase = createClient();
-      const redirectTo = getAuthCallbackUrl(nextPath);
-      const native = isNativeRuntime();
+      let native = isNativeRuntime();
+      try {
+        const { Capacitor } = await import("@capacitor/core");
+        native = Capacitor.isNativePlatform();
+      } catch {
+        // Stay with the synchronous Capacitor global when the module is unavailable.
+      }
+      const destination = hasPendingOnboardingDraft() ? "/setup/complete" : nextPath;
+      const redirectTo = getAuthCallbackUrl(destination);
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {

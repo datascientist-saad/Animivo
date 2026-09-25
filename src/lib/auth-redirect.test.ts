@@ -33,6 +33,16 @@ describe("resolvePostAuthPath", () => {
     ).toBe("/invite/abc123");
   });
 
+  it("sends a pending draft to setup complete even after Google returns /home", () => {
+    expect(
+      resolvePostAuthPath("/home", {
+        hasNoPets: false,
+        hasIncompleteOnboarding: false,
+        hasPendingOnboardingDraft: true,
+      })
+    ).toBe("/setup/complete");
+  });
+
   it("prioritizes pending onboarding draft over onboarding", () => {
     expect(
       resolvePostAuthPath("/home", {

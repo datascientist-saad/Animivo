@@ -1,101 +1,64 @@
 #!/usr/bin/env node
 /**
- * Generates simple Animivo PWA icons as PNG files.
- * Uses only Node.js built-ins (zlib + fs).
+ * Builds native/PWA icons from the official Animivo logo.
+ * Source: public/brand/animivo-logo.png — do not invent a second mark.
  */
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import zlib from "zlib";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
+const logoPath = path.join(root, "public/brand/animivo-logo.png");
+const cream = { r: 0xfa, g: 0xf7, b: 0xf2, alpha: 1 };
 
-function crc32(buf) {
-  let crc = 0xffffffff;
-  for (let i = 0; i < buf.length; i++) {
-    crc ^= buf[i];
-    for (let j = 0; j < 8; j++) {
-      crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
-    }
-  }
-  return (crc ^ 0xffffffff) >>> 0;
-}
-
-function chunk(type, data) {
-  const len = Buffer.alloc(4);
-  len.writeUInt32BE(data.length, 0);
-  const typeBuf = Buffer.from(type);
-  const crcBuf = Buffer.alloc(4);
-  crcBuf.writeUInt32BE(crc32(Buffer.concat([typeBuf, data])), 0);
-  return Buffer.concat([len, typeBuf, data, crcBuf]);
-}
-
-function createPng(size) {
-  const bg = { r: 0x6b, g: 0x8f, b: 0x71 };
-  const accent = { r: 0xfa, g: 0xf7, b: 0xf2 };
-  const raw = Buffer.alloc((size * 4 + 1) * size);
-
-  const cx = size / 2;
-  const cy = size / 2;
-  const pawRadius = size * 0.18;
-  const toeRadius = size * 0.09;
-  const toes = [
-    { x: cx - size * 0.2, y: cy - size * 0.12 },
-    { x: cx - size * 0.07, y: cy - size * 0.22 },
-    { x: cx + size * 0.07, y: cy - size * 0.22 },
-    { x: cx + size * 0.2, y: cy - size * 0.12 },
-  ];
-
-  function insideCircle(x, y, cx2, cy2, r) {
-    const dx = x - cx2;
-    const dy = y - cy2;
-    return dx * dx + dy * dy <= r * r;
+async function compositeLogo(size, paddingRatio) {
+  const logo = sharp(logoPath);
+  const meta = await logo.metadata();
+  if (!meta.width || !meta.height) {
+    throw new Error(`Could not read official logo at ${logoPath}`);
   }
 
-  for (let y = 0; y < size; y++) {
-    const rowStart = y * (size * 4 + 1);
-    raw[rowStart] = 0;
-    for (let x = 0; x < size; x++) {
-      const i = rowStart + 1 + x * 4;
-      let color = bg;
-      if (
-        insideCircle(x, y, cx, cy + size * 0.08, pawRadius) ||
-        toes.some((toe) => insideCircle(x, y, toe.x, toe.y, toeRadius))
-      ) {
-        color = accent;
-      }
-      raw[i] = color.r;
-      raw[i + 1] = color.g;
-      raw[i + 2] = color.b;
-      raw[i + 3] = 255;
-    }
-  }
+  const pad = Math.round(size * paddingRatio);
+  const maxW = size - pad * 2;
+  const maxH = size - pad * 2;
+  const scale = Math.min(maxW / meta.width, maxH / meta.height);
+  const width = Math.round(meta.width * scale);
+  const height = Math.round(meta.height * scale);
+  const left = Math.round((size - width) / 2);
+  const top = Math.round((size - height) / 2);
+  const resized = await logo
+    .resize(width, height, { fit: "inside", withoutEnlargement: false })
+    .png()
+    .toBuffer();
 
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0);
-  ihdr.writeUInt32BE(size, 4);
-  ihdr[8] = 8;
-  ihdr[9] = 6;
-  ihdr[10] = 0;
-  ihdr[11] = 0;
-  ihdr[12] = 0;
-
-  const compressed = zlib.deflateSync(raw, { level: 9 });
-  return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-    chunk("IHDR", ihdr),
-    chunk("IDAT", compressed),
-    chunk("IEND", Buffer.alloc(0)),
-  ]);
+  return sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 4,
+      background: cream,
+    },
+  })
+    .composite([{ input: resized, left, top }])
+    .png()
+    .toBuffer();
 }
 
-const outDir = path.join(__dirname, "..", "public", "icons");
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, "icon-192.png"), createPng(192));
-fs.writeFileSync(path.join(outDir, "icon-512.png"), createPng(512));
-const resourcesDir = path.join(__dirname, "..", "resources");
-fs.mkdirSync(resourcesDir, { recursive: true });
-fs.writeFileSync(path.join(resourcesDir, "icon.png"), createPng(1024));
-fs.writeFileSync(path.join(resourcesDir, "splash.png"), createPng(2732));
-console.log("Generated PWA icons plus resources/icon.png (1024) and resources/splash.png (2732)");
+async function writePng(rel, buffer) {
+  const dest = path.join(root, rel);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.writeFileSync(dest, buffer);
+  console.log("wrote", rel);
+}
+
+const icon = await compositeLogo(1024, 0.12);
+const splash = await compositeLogo(2732, 0.18);
+const icon192 = await compositeLogo(192, 0.12);
+const icon512 = await compositeLogo(512, 0.12);
+
+await writePng("resources/icon.png", icon);
+await writePng("resources/splash.png", splash);
+await writePng("public/icons/icon-192.png", icon192);
+await writePng("public/icons/icon-512.png", icon512);

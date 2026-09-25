@@ -30,6 +30,17 @@ describe("native deep links", () => {
   it("builds the native callback URL", () => {
     expect(nativeAuthCallbackUrl("/home")).toBe("animivo://auth/callback?next=%2Fhome");
   });
+
+  it("parses the native handoff URL produced after Google OAuth", () => {
+    const parsed = parseNativeDeepLink(
+      "animivo://auth/callback?code=pkce-code&next=%2Fsetup%2Fcomplete"
+    );
+    expect(parsed).toMatchObject({
+      kind: "auth-callback",
+      code: "pkce-code",
+      next: "/setup/complete",
+    });
+  });
 });
 
 describe("android back button roots", () => {

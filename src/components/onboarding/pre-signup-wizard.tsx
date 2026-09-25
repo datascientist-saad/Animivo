@@ -108,6 +108,11 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    document.documentElement.classList.add("onboarding-active");
+    return () => document.documentElement.classList.remove("onboarding-active");
+  }, []);
+
+  useEffect(() => {
     scheduleOnboardingScrollReset(rootRef.current);
   }, [step]);
 

@@ -22,7 +22,7 @@ export function MarketingShell({ children, variant = "default" }: MarketingShell
     <div
       className={cn(
         "flex min-h-dvh flex-col bg-background",
-        isOnboarding && "onboarding-shell min-h-svh",
+        isOnboarding && "onboarding-shell h-dvh max-h-dvh min-h-svh overflow-hidden",
       )}
     >
       <SkipLink />

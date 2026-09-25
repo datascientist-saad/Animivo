@@ -254,18 +254,33 @@ html.keyboard-open .onboarding-chrome {
   display: none;
 }
 
+html.onboarding-active,
+html.onboarding-active body {
+  overflow-anchor: none;
+  scroll-behavior: auto;
+  overscroll-behavior-y: none;
+}
+
+.onboarding-shell {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 .native-app .onboarding-shell {
   min-height: 100svh;
+  height: 100svh;
   max-height: 100svh;
+}
+
+.native-app .onboarding-scroll,
+.onboarding-scroll,
+.onboarding-wizard {
+  overflow-anchor: none;
 }
 
 .native-app .onboarding-scroll {
   min-height: 0;
-  overflow-anchor: none;
-}
-
-.native-app .onboarding-wizard {
-  overflow-anchor: none;
 }
 
 h1,

@@ -41,27 +41,48 @@ export function collectOnboardingScrollContainers(from?: HTMLElement | null): HT
   return nodes;
 }
 
+function withInstantScroll(run: () => void) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  try {
+    run();
+  } finally {
+    root.style.scrollBehavior = previous;
+  }
+}
+
 /** Instantly pin every onboarding scroller to the top so the heading is visible. */
 export function scrollOnboardingToTop(from?: HTMLElement | null) {
   if (typeof document === "undefined") return;
 
-  for (const node of collectOnboardingScrollContainers(from)) {
-    node.scrollTop = 0;
-    node.scrollLeft = 0;
-  }
+  withInstantScroll(() => {
+    for (const node of collectOnboardingScrollContainers(from)) {
+      node.scrollTop = 0;
+      node.scrollLeft = 0;
+    }
 
-  if (typeof window !== "undefined") {
-    window.scrollTo(0, 0);
-  }
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      window.scrollTo(0, 0);
+    }
+  });
 }
 
 /** Reset now and again after layout so a newly mounted step does not inherit scroll. */
 export function scheduleOnboardingScrollReset(from?: HTMLElement | null) {
   scrollOnboardingToTop(from);
-  if (typeof requestAnimationFrame !== "function") return;
 
-  requestAnimationFrame(() => {
-    scrollOnboardingToTop(from);
-    requestAnimationFrame(() => scrollOnboardingToTop(from));
-  });
+  const followUp = () => scrollOnboardingToTop(from);
+  if (typeof requestAnimationFrame === "function") {
+    requestAnimationFrame(() => {
+      followUp();
+      requestAnimationFrame(followUp);
+    });
+  }
+  if (typeof setTimeout === "function") {
+    setTimeout(followUp, 50);
+    setTimeout(followUp, 120);
+  }
 }

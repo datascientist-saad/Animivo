@@ -82,10 +82,15 @@ describe("onboarding scroll reset", () => {
 
   it("schedules a second reset after layout", () => {
     const frames: FrameRequestCallback[] = [];
+    const timeouts: Array<{ cb: () => void; ms: number }> = [];
     vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
       frames.push(cb);
       return frames.length;
     });
+    vi.stubGlobal("setTimeout", ((cb: () => void, ms?: number) => {
+      timeouts.push({ cb, ms: ms ?? 0 });
+      return timeouts.length;
+    }) as typeof setTimeout);
 
     const { main } = installDom();
     scheduleOnboardingScrollReset();
@@ -97,6 +102,10 @@ describe("onboarding scroll reset", () => {
 
     if (main) main.scrollTop = 140;
     frames[1]?.(0);
+    expect(main?.scrollTop).toBe(0);
+
+    if (main) main.scrollTop = 90;
+    timeouts[0]?.cb();
     expect(main?.scrollTop).toBe(0);
   });
 });

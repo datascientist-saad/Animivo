@@ -249,8 +249,23 @@ body {
   font-size: 16px;
 }
 
-html.keyboard-open .app-tab-bar {
+html.keyboard-open .app-tab-bar,
+html.keyboard-open .onboarding-chrome {
   display: none;
+}
+
+.native-app .onboarding-shell {
+  min-height: 100svh;
+  max-height: 100svh;
+}
+
+.native-app .onboarding-scroll {
+  min-height: 0;
+  overflow-anchor: none;
+}
+
+.native-app .onboarding-wizard {
+  overflow-anchor: none;
 }
 
 h1,

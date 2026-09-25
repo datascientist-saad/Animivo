@@ -14,7 +14,7 @@ import { speciesUsesBirdNutrition } from "@/lib/species/registry";
 import type { OnboardingDraftData } from "@/types/onboarding-draft";
 import { initialOnboardingDraft } from "@/types/onboarding-draft";
 import type { Pet } from "@/types/database";
-import { logError } from "@/lib/errors";
+import { AppError, logError } from "@/lib/errors";
 import { CareTaskService } from "@/services/care-task-service";
 import { DietPlanService } from "@/services/diet-plan-service";
 import { NutritionProfileService } from "@/services/nutrition-profile-service";
@@ -228,7 +228,12 @@ export async function transferOnboardingDraft(
 
   await syncDraftDetails(supabase, user.id, pet.id, draft);
 
-  return { petId: pet.id, petName: pet.name };
+  const verified = await petService.getById(pet.id);
+  if (!verified || verified.owner_id !== user.id) {
+    throw new AppError("Your pet was not saved to your account. Please try again.");
+  }
+
+  return { petId: verified.id, petName: verified.name };
 }
 
 /** Always creates a new pet — use when adding another pet from the logged-in app. */
@@ -245,5 +250,10 @@ export async function createPetFromOnboardingDraft(
 
   await syncDraftDetails(supabase, user.id, pet.id, draft);
 
-  return { petId: pet.id, petName: pet.name };
+  const verified = await petService.getById(pet.id);
+  if (!verified || verified.owner_id !== user.id) {
+    throw new AppError("Your pet was not saved to your account. Please try again.");
+  }
+
+  return { petId: verified.id, petName: verified.name };
 }

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
 import { brand } from "@/lib/brand";
-import { hasOnboardingDraft } from "@/lib/onboarding-draft";
+import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema } from "@/lib/validations";
 import { PetService } from "@/services/pet-service";
@@ -38,7 +38,7 @@ export default function LoginForm() {
   const [next, setNext] = useState(searchNext);
 
   useEffect(() => {
-    if (!searchParams.get("next") && hasOnboardingDraft()) {
+    if (!searchParams.get("next") && hasPendingOnboardingDraft()) {
       setNext("/setup/complete");
     }
   }, [searchParams]);
@@ -82,7 +82,7 @@ export default function LoginForm() {
         const destination = resolvePostAuthPath(next, {
           hasNoPets: pets.length === 0,
           hasIncompleteOnboarding: pets.some((pet) => !pet.onboarding_completed),
-          hasPendingOnboardingDraft: hasOnboardingDraft(),
+          hasPendingOnboardingDraft: hasPendingOnboardingDraft(),
         });
         router.replace(destination);
         router.refresh();

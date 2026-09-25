@@ -1,5 +1,9 @@
-import { NextResponse } from "next/server";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
+import {
+  buildNativeOAuthHandoffUrl,
+  nativeOAuthHandoffHtml,
+  shouldHandoffOAuthToNativeApp,
+} from "@/lib/native/oauth-handoff";
 import { createClient } from "@/lib/supabase/server";
 import { PetService } from "@/services/pet-service";
 
@@ -7,6 +11,18 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const nextParam = sanitizeNextPath(searchParams.get("next"));
+
+  if (shouldHandoffOAuthToNativeApp(searchParams)) {
+    const location = buildNativeOAuthHandoffUrl(searchParams);
+    return new Response(nativeOAuthHandoffHtml(location), {
+      status: 200,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-store",
+        Location: location,
+      },
+    });
+  }
 
   if (code) {
     const supabase = await createClient();
@@ -36,9 +52,9 @@ export async function GET(request: Request) {
         hasPendingOnboardingDraft: request.headers.get("cookie")?.includes("animivo_onboarding_pending=1"),
       });
 
-      return NextResponse.redirect(`${origin}${destination}`);
+      return Response.redirect(`${origin}${destination}`, 307);
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);
+  return Response.redirect(`${origin}/login?error=auth_callback_failed`, 307);
 }

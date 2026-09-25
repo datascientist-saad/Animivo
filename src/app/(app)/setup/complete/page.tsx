@@ -42,7 +42,17 @@ export default function SetupCompletePage() {
 
     if (!acquireTransferLock()) {
       setMessage("Your pet is already being saved…");
-      return;
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      if (wasOnboardingTransferred()) {
+        await refreshPets();
+        router.replace("/home");
+        router.refresh();
+        return;
+      }
+      if (!acquireTransferLock()) {
+        setError("Your pet is still being saved. Wait a moment, then tap Try again.");
+        return;
+      }
     }
 
     try {

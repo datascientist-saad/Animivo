@@ -72,9 +72,9 @@ animivo://auth/callback
 animivo://reset-password
 ```
 
-Also allow local development: `http://localhost:3000/auth/callback`. Optional extras that already work in the app: `https://animivo.vercel.app/auth/callback?next=/reset-password` and `animivo://auth/callback?next=/reset-password`.
+Also allow local development: `http://localhost:3000/auth/callback`. Native Google sign-in uses `https://animivo.vercel.app/auth/callback?native=1`, then the server bounces to `animivo://auth/callback` so the PKCE code is exchanged in the Capacitor WebView — not in Chrome. Website Google sign-in stays on HTTPS and is unchanged.
 
-Enable Email (password) and, if used, Google. Google OAuth in the native app uses the system browser plus `animivo://auth/callback` so the PKCE verifier stays in the WebView. A future custom domain can replace these HTTPS origins later through a separate migration.
+Enable Email (password) and, if used, Google. In Google Cloud Console the authorized redirect URI is still the Supabase callback (`https://<project>.supabase.co/auth/v1/callback`), not `animivo://`. A future custom domain can replace these HTTPS origins later through a separate migration.
 
 ## Deep links / Universal Links / App Links
 
@@ -124,9 +124,9 @@ Request camera/library access only when the user taps **Add photo**.
 
 ## Icons and splash
 
-Sources (existing Animivo paw mark, not a new logo):
+Sources (official Animivo logo at `public/brand/animivo-logo.png`, not a new mark):
 
-- `resources/icon.png` — 1024×1024 (generated from `scripts/generate-icons.mjs`)
+- `resources/icon.png` — 1024×1024 (composited from the official logo by `scripts/generate-icons.mjs`)
 - `resources/splash.png` — 2732×2732
 
 Regenerate:

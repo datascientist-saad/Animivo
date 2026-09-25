@@ -8,7 +8,7 @@ import { MissingConfigScreen, hasSupabaseConfig } from "@/components/shared/miss
 import { PetProvider, usePet } from "@/contexts/pet-context";
 import { UserProvider } from "@/contexts/user-context";
 import { LoadingState } from "@/components/shared/page-states";
-import { hasOnboardingDraft } from "@/lib/onboarding-draft";
+import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 
 function AppLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -19,7 +19,7 @@ function AppLayoutInner({ children }: { children: React.ReactNode }) {
     if (loading) return;
     const onOnboarding = pathname.startsWith("/onboarding") || pathname.startsWith("/setup");
     if (!pets.length && !onOnboarding) {
-      if (hasOnboardingDraft()) {
+      if (hasPendingOnboardingDraft()) {
         router.replace("/setup/complete");
       } else {
         router.replace("/onboarding");

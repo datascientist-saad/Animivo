@@ -90,6 +90,10 @@ export function hasOnboardingDraft(): boolean {
   return loadOnboardingDraft() !== null;
 }
 
+export function hasPendingOnboardingDraft(): boolean {
+  return draftHasMeaningfulData(loadOnboardingDraft());
+}
+
 export function draftHasMeaningfulData(draft: OnboardingDraftData | null): boolean {
   if (!draft) return false;
   return Boolean(

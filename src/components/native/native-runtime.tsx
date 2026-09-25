@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { OfflineBanner } from "@/components/native/offline-banner";
-import { sanitizeNextPath } from "@/lib/auth-redirect";
+import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
 import { parseNativeDeepLink } from "@/lib/native/deep-links";
 import { dismissTopOverlay, shouldExitOnBack } from "@/lib/native/navigation";
+import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 import { createClient } from "@/lib/supabase/client";
 
 async function handleLaunchUrl(raw: string, navigate: (path: string) => void) {
@@ -48,7 +49,13 @@ async function handleLaunchUrl(raw: string, navigate: (path: string) => void) {
       navigate(`/login?error=auth_callback_failed`);
       return;
     }
-    navigate(sanitizeNextPath(parsed.next));
+    navigate(
+      resolvePostAuthPath(sanitizeNextPath(parsed.next), {
+        hasNoPets: false,
+        hasIncompleteOnboarding: false,
+        hasPendingOnboardingDraft: hasPendingOnboardingDraft(),
+      })
+    );
   } catch {
     toast.error("Could not complete sign-in. Please try again.");
     navigate("/login?error=auth_callback_failed");

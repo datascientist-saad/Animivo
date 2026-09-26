@@ -3,9 +3,11 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NativeRuntimeRoot } from "@/components/native/native-runtime-root";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { brand } from "@/lib/brand";
 import { getSiteUrl } from "@/lib/site";
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const display = Fraunces({
@@ -74,9 +76,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${display.variable} ${body.variable} min-h-dvh bg-background font-sans text-foreground antialiased`}>
-        <NativeRuntimeRoot />
-        {children}
-        <Toaster position="top-center" richColors closeButton />
+        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
+        <ThemeProvider>
+          <NativeRuntimeRoot />
+          {children}
+          <Toaster position="top-center" richColors closeButton />
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>

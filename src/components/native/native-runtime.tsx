@@ -7,6 +7,7 @@ import { OfflineBanner } from "@/components/native/offline-banner";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
 import { parseNativeDeepLink } from "@/lib/native/deep-links";
 import { dismissTopOverlay, shouldExitOnBack } from "@/lib/native/navigation";
+import { applyNativeSystemBars } from "@/lib/native/system-bars";
 import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 import { createClient } from "@/lib/supabase/client";
 
@@ -76,13 +77,7 @@ export function NativeRuntime() {
       document.documentElement.classList.add("native-app");
       document.documentElement.dataset.nativePlatform = Capacitor.getPlatform();
 
-      try {
-        const { StatusBar, Style } = await import("@capacitor/status-bar");
-        await StatusBar.setStyle({ style: Style.Dark });
-        await StatusBar.setBackgroundColor({ color: "#faf7f2" });
-      } catch {
-        // Status bar plugin is optional on some simulators.
-      }
+      await applyNativeSystemBars(document.documentElement.classList.contains("dark"));
 
       try {
         const { SplashScreen } = await import("@capacitor/splash-screen");

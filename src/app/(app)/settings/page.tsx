@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { AppearanceSettings } from "@/components/settings/appearance-settings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -139,6 +140,8 @@ export default function SettingsPage() {
           <SignOutButton fullWidth className="sm:w-auto" />
         </CardContent>
       </Card>
+
+      <AppearanceSettings />
 
       <Card className="rounded-2xl">
         <CardHeader>

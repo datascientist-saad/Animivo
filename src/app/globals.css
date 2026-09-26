@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #faf7f2;
   --foreground: #2c2a26;
@@ -30,6 +32,38 @@
   --shadow-soft: 0 1px 3px rgb(44 42 38 / 0.06), 0 8px 24px rgb(44 42 38 / 0.04);
   --hero-shadow: 0 28px 65px rgb(107 143 113 / 0.22);
   --spacing-page: 1.25rem;
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #1c1a17;
+  --foreground: #f4efe8;
+  --card: #26231f;
+  --card-foreground: #f4efe8;
+  --popover: #2c2924;
+  --popover-foreground: #f4efe8;
+  --primary: #86a88a;
+  --primary-hover: #97b69a;
+  --primary-foreground: #f7f3ee;
+  --secondary: #322e29;
+  --secondary-foreground: #f0ebe3;
+  --muted: #322e29;
+  --muted-foreground: #c4bdb4;
+  --accent: #e8927a;
+  --accent-foreground: #2a1610;
+  --destructive: #e07a6a;
+  --destructive-foreground: #2a1210;
+  --border: #3f3a34;
+  --input: #3f3a34;
+  --ring: #86a88a;
+  --success: #7fb089;
+  --warning: #e0b27a;
+  --surface: #26231f;
+  --ink: #d5ddd6;
+  --ink-foreground: #1c1a17;
+  --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.28);
+  --hero-shadow: 0 28px 65px rgb(0 0 0 / 0.45);
 }
 
 @theme inline {
@@ -200,6 +234,15 @@
 .field-ease:focus-visible {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgb(107 143 113 / 0.18);
+}
+
+.dark .field-ease:focus,
+.dark .field-ease:focus-visible {
+  box-shadow: 0 0 0 4px rgb(134 168 138 / 0.32);
+}
+
+.dark .lift-card:hover {
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.35);
 }
 
 .btn-ease {

@@ -11,17 +11,18 @@ const sizeClass = {
 
 interface LogoProps {
   className?: string;
+  href?: string;
   showTagline?: boolean;
   size?: keyof typeof sizeClass;
   priority?: boolean;
 }
 
-export function Logo({ className, showTagline = false, size, priority = false }: LogoProps) {
+export function Logo({ className, href = "/", showTagline = false, size, priority = false }: LogoProps) {
   const resolved = size ?? (showTagline ? "lg" : "md");
 
   return (
     <Link
-      href="/"
+      href={href}
       aria-label={brand.aiName}
       className={cn("inline-flex items-center transition-opacity hover:opacity-80", className)}
     >

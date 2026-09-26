@@ -60,8 +60,8 @@
   --success: #7fb089;
   --warning: #e0b27a;
   --surface: #26231f;
-  --ink: #d5ddd6;
-  --ink-foreground: #1c1a17;
+  --ink: #3a4a3e;
+  --ink-foreground: #f7f3ee;
   --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.28);
   --hero-shadow: 0 28px 65px rgb(0 0 0 / 0.45);
 }

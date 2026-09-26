@@ -1,6 +1,5 @@
 import { sanitizeNextPath } from "@/lib/auth-redirect";
 import type { CareReminder } from "@/lib/native/care-reminders";
-import { isNativePluginAvailable, isNativeRuntime } from "@/lib/native/platform";
 
 export const CARE_NOTIFICATION_CHANNEL_ID = "animivo-care";
 export const LOCAL_NOTIFICATIONS_PLUGIN = "LocalNotifications";
@@ -27,7 +26,9 @@ export function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Pr
 }
 
 async function getPlugin() {
-  if (!isNativeRuntime() || !isNativePluginAvailable(LOCAL_NOTIFICATIONS_PLUGIN)) {
+  const { Capacitor } = await import("@capacitor/core");
+  if (!Capacitor.isNativePlatform()) return null;
+  if (typeof Capacitor.isPluginAvailable === "function" && !Capacitor.isPluginAvailable(LOCAL_NOTIFICATIONS_PLUGIN)) {
     return null;
   }
   const { LocalNotifications } = await import("@capacitor/local-notifications");

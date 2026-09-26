@@ -1,11 +1,13 @@
 import { sanitizeNextPath } from "@/lib/auth-redirect";
 import type { CareReminder } from "@/lib/native/care-reminders";
+import { getCareRemindersNativePlugin, sleep } from "@/lib/native/care-reminders-plugin";
 
 export const CARE_NOTIFICATION_CHANNEL_ID = "animivo-care";
 export const LOCAL_NOTIFICATIONS_PLUGIN = "LocalNotifications";
 const ASKED_STORAGE_KEY = "animivo-notify-asked";
 const CHECK_TIMEOUT_MS = 2500;
-const REQUEST_TIMEOUT_MS = 45000;
+const REQUEST_TIMEOUT_MS = 6000;
+const GRANT_POLL_MS = 6000;
 
 export type NotificationPermissionState = "granted" | "denied" | "prompt" | "unavailable";
 
@@ -44,6 +46,11 @@ function asPermissionState(
 
 export async function getNotificationPermission(): Promise<NotificationPermissionState> {
   try {
+    const native = await getCareRemindersNativePlugin();
+    if (native) {
+      const access = await withTimeout(native.getNotificationAccess(), CHECK_TIMEOUT_MS, { enabled: false });
+      return access.enabled ? "granted" : "prompt";
+    }
     const plugin = await getPlugin();
     if (!plugin) return "unavailable";
     const status = await withTimeout(plugin.checkPermissions(), CHECK_TIMEOUT_MS, { display: "unavailable" });
@@ -55,9 +62,22 @@ export async function getNotificationPermission(): Promise<NotificationPermissio
 
 export async function requestNotificationPermission(): Promise<NotificationPermissionState> {
   try {
+    rememberPermissionPrompt();
+    const native = await getCareRemindersNativePlugin();
+    if (native) {
+      await withTimeout(native.requestNotificationAccess(), CHECK_TIMEOUT_MS, { enabled: false });
+      const granted = await waitForNotificationGrant(async () => {
+        const access = await withTimeout(native.getNotificationAccess(), CHECK_TIMEOUT_MS, { enabled: false });
+        return access.enabled;
+      });
+      if (granted) return "granted";
+      await withTimeout(native.openNotificationSettings(), CHECK_TIMEOUT_MS, undefined);
+      const afterSettings = await withTimeout(native.getNotificationAccess(), CHECK_TIMEOUT_MS, { enabled: false });
+      return afterSettings.enabled ? "granted" : "prompt";
+    }
+
     const plugin = await getPlugin();
     if (!plugin) return "unavailable";
-    rememberPermissionPrompt();
     const status = await withTimeout(
       plugin.requestPermissions(),
       REQUEST_TIMEOUT_MS,
@@ -67,6 +87,15 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   } catch {
     return "unavailable";
   }
+}
+
+async function waitForNotificationGrant(check: () => Promise<boolean>): Promise<boolean> {
+  const deadline = Date.now() + GRANT_POLL_MS;
+  while (Date.now() < deadline) {
+    if (await check()) return true;
+    await sleep(400);
+  }
+  return false;
 }
 
 export function hasAskedNotificationPermission(): boolean {

@@ -57,6 +57,25 @@ export function DeviceRemindersSettings({ prefs }: { prefs: NotificationPreferen
     void loadPermission();
   }, [loadPermission]);
 
+  useEffect(() => {
+    if (!native) return;
+    let remove: (() => void) | undefined;
+    void import("@capacitor/app").then(async ({ App }) => {
+      const handle = await App.addListener("appStateChange", ({ isActive }) => {
+        if (!isActive) return;
+        void (async () => {
+          const next = await getNotificationPermission();
+          setPermission(next);
+          if (next === "granted") dispatchCareRemindersRefresh();
+        })();
+      });
+      remove = () => {
+        void handle.remove();
+      };
+    });
+    return () => remove?.();
+  }, [native]);
+
   async function enableReminders() {
     setAsking(true);
     try {
@@ -70,6 +89,9 @@ export function DeviceRemindersSettings({ prefs }: { prefs: NotificationPreferen
       if (next === "denied") {
         toast.error("Notifications are blocked. Enable them in Android Settings → Apps → Animivo.");
         return;
+      }
+      if (next === "prompt") {
+        toast.message("Turn on Notifications for Animivo, then return here.");
       }
     } finally {
       setAsking(false);
@@ -140,10 +162,10 @@ function PermissionRow({
           ? "Android is blocking notifications for Animivo."
           : permission === "unavailable"
             ? "This phone still has an older Animivo install. Lock-screen reminders need a rebuilt APK (npx cap sync android, then Run on the phone). After that, tap Try again."
-            : "Allow lock-screen reminders on this phone."}
+            : "Allow lock-screen reminders. On a Pixel emulator the system sheet often never appears, so Enable opens Animivo’s notification settings instead."}
       </p>
       <Button onClick={onEnable} disabled={asking} className="rounded-xl sm:w-auto">
-        {asking ? "Asking…" : permission === "prompt" ? "Enable reminders" : "Try again"}
+        {asking ? "Waiting for Android…" : permission === "prompt" ? "Enable reminders" : "Try again"}
       </Button>
     </div>
   );

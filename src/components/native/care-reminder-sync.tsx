@@ -8,12 +8,7 @@ import {
   CARE_REMINDERS_REFRESH_EVENT,
   DEFAULT_NOTIFICATION_PREFS,
 } from "@/lib/native/care-reminders";
-import {
-  cancelAllCareReminders,
-  getNotificationPermission,
-  hasAskedNotificationPermission,
-  requestNotificationPermission,
-} from "@/lib/native/local-notifications";
+import { cancelAllCareReminders, getNotificationPermission } from "@/lib/native/local-notifications";
 import { isNativeRuntime } from "@/lib/native/platform";
 import { createClient } from "@/lib/supabase/client";
 
@@ -37,20 +32,7 @@ export function CareReminderSync() {
       if (cancelled) return;
 
       const permission = await getNotificationPermission();
-      if (permission !== "granted") {
-        const anyEnabled =
-          prefs.care_reminders ||
-          prefs.vaccination_alerts ||
-          prefs.medication_alerts ||
-          prefs.weight_suggestions;
-        if (permission === "prompt" && anyEnabled && !hasAskedNotificationPermission()) {
-          const next = await requestNotificationPermission();
-          if (next !== "granted" || cancelled) return;
-        } else {
-          return;
-        }
-      }
-
+      if (permission !== "granted") return;
       await syncDeviceCareReminders(supabase, pets, prefs);
     }
 

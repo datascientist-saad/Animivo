@@ -22,21 +22,17 @@ import type { NotificationPreferences } from "@/types/database";
 
 export function DeviceRemindersSettings({ prefs }: { prefs: NotificationPreferences }) {
   const { pets } = usePet();
-  const [permission, setPermission] = useState<NotificationPermissionState>("unavailable");
+  const [permission, setPermission] = useState<NotificationPermissionState>("prompt");
   const [reminders, setReminders] = useState<CareReminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [asking, setAsking] = useState(false);
   const native = isNativeRuntime();
 
-  const load = useCallback(async () => {
+  const loadSchedule = useCallback(async () => {
     setLoading(true);
     try {
       const supabase = createClient();
-      const [nextPermission, nextReminders] = await Promise.all([
-        getNotificationPermission(),
-        previewCareReminders(supabase, pets, prefs),
-      ]);
-      setPermission(nextPermission);
+      const nextReminders = await previewCareReminders(supabase, pets, prefs);
       setReminders(nextReminders.slice(0, 8));
     } catch {
       setReminders([]);
@@ -45,9 +41,21 @@ export function DeviceRemindersSettings({ prefs }: { prefs: NotificationPreferen
     }
   }, [pets, prefs]);
 
+  const loadPermission = useCallback(async () => {
+    if (!native) {
+      setPermission("unavailable");
+      return;
+    }
+    setPermission(await getNotificationPermission());
+  }, [native]);
+
   useEffect(() => {
-    void load();
-  }, [load]);
+    void loadSchedule();
+  }, [loadSchedule]);
+
+  useEffect(() => {
+    void loadPermission();
+  }, [loadPermission]);
 
   async function enableReminders() {
     setAsking(true);
@@ -57,10 +65,15 @@ export function DeviceRemindersSettings({ prefs }: { prefs: NotificationPreferen
       if (next === "granted") {
         dispatchCareRemindersRefresh();
         toast.success("Device reminders are on. We'll ping you at meal and check-in times.");
-        void load();
-      } else if (next === "denied") {
-        toast.error("Notifications are blocked. Enable them in the Android app settings.");
+        return;
       }
+      if (next === "denied") {
+        toast.error("Notifications are blocked. Enable them in Android Settings → Apps → Animivo.");
+        return;
+      }
+      toast.error(
+        "Android didn’t show the permission prompt. Fully close Animivo, reopen it, then tap Enable reminders. If that still fails, reinstall the latest Android build."
+      );
     } finally {
       setAsking(false);
     }
@@ -128,7 +141,9 @@ function PermissionRow({
       <p className="text-sm text-muted-foreground">
         {permission === "denied"
           ? "Android is blocking notifications for Animivo."
-          : "Allow lock-screen reminders on this phone."}
+          : permission === "unavailable"
+            ? "This phone build can’t show the Android permission prompt yet. Reinstall the latest Animivo APK, then tap Enable reminders."
+            : "Allow lock-screen reminders on this phone."}
       </p>
       <Button onClick={onEnable} disabled={asking} className="rounded-xl sm:w-auto">
         {asking ? "Asking…" : permission === "denied" ? "Try again" : "Enable reminders"}

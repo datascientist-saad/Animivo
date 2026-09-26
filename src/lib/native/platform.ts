@@ -1,6 +1,7 @@
 type CapacitorBridge = {
   isNativePlatform?: () => boolean;
   getPlatform?: () => string;
+  isPluginAvailable?: (name: string) => boolean;
 };
 
 function getCapacitor(): CapacitorBridge | undefined {
@@ -10,6 +11,11 @@ function getCapacitor(): CapacitorBridge | undefined {
 
 export function isNativeRuntime(): boolean {
   return getCapacitor()?.isNativePlatform?.() === true;
+}
+
+export function isNativePluginAvailable(name: string): boolean {
+  if (!isNativeRuntime()) return false;
+  return getCapacitor()?.isPluginAvailable?.(name) === true;
 }
 
 export function getNativePlatform(): "ios" | "android" | "web" {

@@ -1,26 +1,52 @@
 import { sanitizeNextPath } from "@/lib/auth-redirect";
 import type { CareReminder } from "@/lib/native/care-reminders";
+import { isNativePluginAvailable, isNativeRuntime } from "@/lib/native/platform";
 
 export const CARE_NOTIFICATION_CHANNEL_ID = "animivo-care";
+export const LOCAL_NOTIFICATIONS_PLUGIN = "LocalNotifications";
 const ASKED_STORAGE_KEY = "animivo-notify-asked";
+const CHECK_TIMEOUT_MS = 2500;
+const REQUEST_TIMEOUT_MS = 45000;
 
 export type NotificationPermissionState = "granted" | "denied" | "prompt" | "unavailable";
 
+export function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallback), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(fallback);
+      }
+    );
+  });
+}
+
 async function getPlugin() {
-  const { Capacitor } = await import("@capacitor/core");
-  if (!Capacitor.isNativePlatform()) return null;
+  if (!isNativeRuntime() || !isNativePluginAvailable(LOCAL_NOTIFICATIONS_PLUGIN)) {
+    return null;
+  }
   const { LocalNotifications } = await import("@capacitor/local-notifications");
   return LocalNotifications;
+}
+
+function asPermissionState(
+  value: string | undefined,
+  fallback: NotificationPermissionState
+): NotificationPermissionState {
+  return value === "granted" || value === "denied" || value === "prompt" ? value : fallback;
 }
 
 export async function getNotificationPermission(): Promise<NotificationPermissionState> {
   try {
     const plugin = await getPlugin();
     if (!plugin) return "unavailable";
-    const status = await plugin.checkPermissions();
-    return status.display === "granted" || status.display === "denied" || status.display === "prompt"
-      ? status.display
-      : "prompt";
+    const status = await withTimeout(plugin.checkPermissions(), CHECK_TIMEOUT_MS, { display: "unavailable" });
+    return asPermissionState(status.display, "unavailable");
   } catch {
     return "unavailable";
   }
@@ -31,10 +57,12 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
     const plugin = await getPlugin();
     if (!plugin) return "unavailable";
     rememberPermissionPrompt();
-    const status = await plugin.requestPermissions();
-    return status.display === "granted" || status.display === "denied" || status.display === "prompt"
-      ? status.display
-      : "denied";
+    const status = await withTimeout(
+      plugin.requestPermissions(),
+      REQUEST_TIMEOUT_MS,
+      { display: "unavailable" }
+    );
+    return asPermissionState(status.display, "unavailable");
   } catch {
     return "unavailable";
   }
@@ -53,30 +81,38 @@ export function rememberPermissionPrompt() {
 export async function ensureCareNotificationChannel() {
   const plugin = await getPlugin();
   if (!plugin) return;
-  await plugin.createChannel({
-    id: CARE_NOTIFICATION_CHANNEL_ID,
-    name: "Care reminders",
-    description: "Meal times, weight checks, and other care reminders",
-    importance: 4,
-    visibility: 1,
-    vibration: true,
-    lights: true,
-    lightColor: "#6b8f71",
-  });
+  await withTimeout(
+    plugin.createChannel({
+      id: CARE_NOTIFICATION_CHANNEL_ID,
+      name: "Care reminders",
+      description: "Meal times, weight checks, and other care reminders",
+      importance: 4,
+      visibility: 1,
+      vibration: true,
+      lights: true,
+      lightColor: "#6b8f71",
+    }),
+    CHECK_TIMEOUT_MS,
+    undefined
+  );
 }
 
 export async function cancelAllCareReminders() {
   const plugin = await getPlugin();
   if (!plugin) return;
   if (typeof plugin.cancelAll === "function") {
-    await plugin.cancelAll();
+    await withTimeout(plugin.cancelAll(), CHECK_TIMEOUT_MS, undefined);
     return;
   }
-  const pending = await plugin.getPending();
+  const pending = await withTimeout(plugin.getPending(), CHECK_TIMEOUT_MS, { notifications: [] });
   if (!pending.notifications.length) return;
-  await plugin.cancel({
-    notifications: pending.notifications.map((item) => ({ id: item.id })),
-  });
+  await withTimeout(
+    plugin.cancel({
+      notifications: pending.notifications.map((item) => ({ id: item.id })),
+    }),
+    CHECK_TIMEOUT_MS,
+    undefined
+  );
 }
 
 export async function scheduleCareReminders(reminders: CareReminder[]) {
@@ -86,33 +122,42 @@ export async function scheduleCareReminders(reminders: CareReminder[]) {
   await cancelAllCareReminders();
   if (!reminders.length) return;
 
-  await plugin.schedule({
-    notifications: reminders.map((reminder) => ({
-      id: reminder.id,
-      title: reminder.title,
-      body: reminder.body,
-      largeBody: reminder.body,
-      schedule: toNativeSchedule(reminder),
-      extra: { path: reminder.path, kind: reminder.kind, petId: reminder.petId, key: reminder.key },
-      channelId: CARE_NOTIFICATION_CHANNEL_ID,
-      smallIcon: "ic_stat_animivo",
-      iconColor: "#6b8f71",
-      autoCancel: true,
-      group: "animivo-care",
-      isExactNotification: false,
-    })),
-  });
+  await withTimeout(
+    plugin.schedule({
+      notifications: reminders.map((reminder) => ({
+        id: reminder.id,
+        title: reminder.title,
+        body: reminder.body,
+        largeBody: reminder.body,
+        schedule: toNativeSchedule(reminder),
+        extra: { path: reminder.path, kind: reminder.kind, petId: reminder.petId, key: reminder.key },
+        channelId: CARE_NOTIFICATION_CHANNEL_ID,
+        smallIcon: "ic_stat_animivo",
+        iconColor: "#6b8f71",
+        autoCancel: true,
+        group: "animivo-care",
+        isExactNotification: false,
+      })),
+    }),
+    8000,
+    undefined
+  );
 }
 
 export async function listenForCareReminderTaps(navigate: (path: string) => void): Promise<() => void> {
   const plugin = await getPlugin();
   if (!plugin) return () => undefined;
-  const handle = await plugin.addListener("localNotificationActionPerformed", (event) => {
-    const path = sanitizeNextPath(
-      typeof event.notification.extra?.path === "string" ? event.notification.extra.path : null
-    );
-    navigate(path);
-  });
+  const handle = await withTimeout(
+    plugin.addListener("localNotificationActionPerformed", (event) => {
+      const path = sanitizeNextPath(
+        typeof event.notification.extra?.path === "string" ? event.notification.extra.path : null
+      );
+      navigate(path);
+    }),
+    CHECK_TIMEOUT_MS,
+    null
+  );
+  if (!handle) return () => undefined;
   return () => {
     void handle.remove();
   };

@@ -146,8 +146,6 @@ export default function SettingsPage() {
 
       <AppearanceSettings />
 
-      <DeviceRemindersSettings prefs={prefs} />
-
       <Card className="rounded-2xl">
         <CardHeader>
           <CardTitle className="text-base">About</CardTitle>
@@ -167,6 +165,8 @@ export default function SettingsPage() {
           </Link>
         </CardContent>
       </Card>
+
+      <DeviceRemindersSettings prefs={prefs} />
 
       <Card className="rounded-2xl">
         <CardHeader>

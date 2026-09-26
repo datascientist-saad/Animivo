@@ -82,7 +82,10 @@ export default function NotificationsPage() {
       ) : error ? (
         <ErrorState message={error} onRetry={loadData} />
       ) : notifications.length === 0 ? (
-        <EmptyState title="All quiet here" description="We'll let you know when something needs your attention." />
+        <EmptyState
+          title="All quiet here"
+          description="Meal times, weight check-ins, and other care pings also show on your phone. Turn those on in Settings."
+        />
       ) : (
         <div className="space-y-2">
           {notifications.map((n) => (

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { OfflineBanner } from "@/components/native/offline-banner";
 import { resolvePostAuthPath, sanitizeNextPath } from "@/lib/auth-redirect";
 import { parseNativeDeepLink } from "@/lib/native/deep-links";
+import { listenForCareReminderTaps } from "@/lib/native/local-notifications";
 import { dismissTopOverlay, shouldExitOnBack } from "@/lib/native/navigation";
 import { applyNativeSystemBars } from "@/lib/native/system-bars";
 import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
@@ -131,6 +132,9 @@ export function NativeRuntime() {
       if (launch?.url) {
         void handleLaunchUrl(launch.url, (path) => router.replace(path));
       }
+
+      const stopTaps = await listenForCareReminderTaps((path) => router.push(path));
+      cleanups.push(stopTaps);
     })();
 
     return () => {

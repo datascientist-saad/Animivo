@@ -7,6 +7,7 @@ import { PetSelector } from "@/components/pets/pet-selector";
 import { MissingConfigScreen, hasSupabaseConfig } from "@/components/shared/missing-config";
 import { PetProvider, usePet } from "@/contexts/pet-context";
 import { UserProvider } from "@/contexts/user-context";
+import { CareReminderSync } from "@/components/native/care-reminder-sync";
 import { LoadingState } from "@/components/shared/page-states";
 import { hasPendingOnboardingDraft } from "@/lib/onboarding-draft";
 
@@ -46,6 +47,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider>
       <PetProvider>
+        <CareReminderSync />
         <AppLayoutInner>{children}</AppLayoutInner>
       </PetProvider>
     </UserProvider>

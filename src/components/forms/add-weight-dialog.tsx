@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
+import { dispatchCareRemindersRefresh } from "@/lib/native/care-reminders";
 import { weightSchema } from "@/lib/validations";
 import { WeightService } from "@/services/nutrition-service";
 
@@ -56,6 +57,7 @@ export function AddWeightDialog({ petId, open, onOpenChange, onSuccess }: AddWei
       setNotes("");
       onOpenChange(false);
       onSuccess?.();
+      dispatchCareRemindersRefresh();
     } catch (err) {
       toast.error(toUserMessage(err));
     } finally {

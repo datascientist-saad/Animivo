@@ -9,6 +9,7 @@ import {
   replaceTaskCompletion,
 } from "@/lib/care-completions";
 import { toUserMessage } from "@/lib/errors";
+import { dispatchCareRemindersRefresh } from "@/lib/native/care-reminders";
 import { CareTaskService } from "@/services/care-task-service";
 import type { CareTask, TaskCompletion } from "@/types/database";
 
@@ -41,6 +42,7 @@ export function useCompleteCareTask({
         const completion = await new CareTaskService(supabase).complete(task, user.id);
         setCompletions((current) => replaceTaskCompletion(current, completion, optimistic.id));
         toast.success(successMessage);
+        dispatchCareRemindersRefresh();
       } catch (err) {
         setCompletions((current) => removeTaskCompletion(current, optimistic.id));
         toast.error(toUserMessage(err));

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { AppearanceSettings } from "@/components/settings/appearance-settings";
+import { DeviceRemindersSettings } from "@/components/settings/device-reminders-settings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,7 @@ import { usePet } from "@/contexts/pet-context";
 import { useUser } from "@/contexts/user-context";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
+import { dispatchCareRemindersRefresh } from "@/lib/native/care-reminders";
 import { inviteSchema } from "@/lib/validations";
 import type { NotificationPreferences } from "@/types/database";
 
@@ -63,6 +65,7 @@ export default function SettingsPage() {
       if (error) throw error;
       toast.success("Notification preferences saved.");
       void refreshProfile();
+      dispatchCareRemindersRefresh();
     } catch (err) {
       toast.error(toUserMessage(err));
     } finally {
@@ -142,6 +145,8 @@ export default function SettingsPage() {
       </Card>
 
       <AppearanceSettings />
+
+      <DeviceRemindersSettings prefs={prefs} />
 
       <Card className="rounded-2xl">
         <CardHeader>

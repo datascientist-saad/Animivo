@@ -4,6 +4,23 @@ import { sanitizeNextPath } from "@/lib/auth-redirect";
 import { isAuthPath, isPrivateAppPath, isPublicPath } from "@/lib/public-routes";
 import { supabasePublicDefaults } from "@/lib/supabase/public-config";
 
+/** Keep refreshed auth cookies on redirects so clicking Home does not sign the user out. */
+export function redirectWithSessionCookies(
+  request: NextRequest,
+  sessionResponse: NextResponse,
+  pathname: string,
+  mutateUrl?: (url: URL) => void
+) {
+  const redirectUrl = request.nextUrl.clone();
+  redirectUrl.pathname = pathname;
+  mutateUrl?.(redirectUrl);
+  const redirectResponse = NextResponse.redirect(redirectUrl);
+  sessionResponse.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie);
+  });
+  return redirectResponse;
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -36,30 +53,27 @@ export async function updateSession(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (user && pathname === "/") {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/home";
-    return NextResponse.redirect(redirectUrl);
+    return redirectWithSessionCookies(request, supabaseResponse, "/home");
   }
 
   if (!user && isPrivateAppPath(pathname)) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    redirectUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(redirectUrl);
+    return redirectWithSessionCookies(request, supabaseResponse, "/login", (url) => {
+      url.searchParams.set("next", pathname);
+    });
   }
 
   if (user && isAuthPath(pathname) && pathname !== "/reset-password") {
-    const redirectUrl = request.nextUrl.clone();
     const requested = request.nextUrl.searchParams.get("next");
     const next = sanitizeNextPath(requested);
-    redirectUrl.pathname =
+    const destination =
       requested === "/setup/complete" || next.startsWith("/invite/") || next === "/setup/complete"
         ? requested === "/setup/complete"
           ? "/setup/complete"
           : next
         : "/home";
-    redirectUrl.searchParams.delete("next");
-    return NextResponse.redirect(redirectUrl);
+    return redirectWithSessionCookies(request, supabaseResponse, destination, (url) => {
+      url.searchParams.delete("next");
+    });
   }
 
   if (!user && !isPublicPath(pathname) && !isAuthPath(pathname) && !pathname.startsWith("/api")) {

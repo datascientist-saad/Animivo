@@ -274,7 +274,7 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
       {isAuthenticatedFlow ? (
         <div className="mb-2 flex flex-col items-center text-center">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Add a pet</p>
-          <Logo size="sm" className="mt-1" />
+          <Logo href="/home" size="sm" className="mt-1" />
         </div>
       ) : null}
 

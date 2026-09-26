@@ -176,16 +176,16 @@ export function LandingContent() {
               className="object-cover object-[60%_center]"
               sizes="(max-width: 1024px) 100vw, 48vw"
             />
-            <div className="anim-float absolute left-3 top-6 z-[2] flex max-w-[220px] items-center gap-3 rounded-2xl border border-white/70 bg-white/90 px-3.5 py-3 shadow-[0_12px_32px_rgb(44_42_38_/_0.14)] backdrop-blur-md sm:left-5 sm:top-16">
+            <div className="anim-float absolute left-3 top-6 z-[2] flex max-w-[220px] items-center gap-3 rounded-2xl border border-white/70 bg-white/95 px-3.5 py-3 text-[#2c2a26] shadow-[0_12px_32px_rgb(44_42_38_/_0.14)] backdrop-blur-md sm:left-5 sm:top-16">
               <HeartPulse className="size-[18px] shrink-0 text-accent" aria-hidden />
-              <span className="text-[0.8rem] leading-snug text-foreground">
+              <span className="text-[0.8rem] leading-snug">
                 <strong className="block font-semibold">Health routines</strong>
                 Never miss what matters
               </span>
             </div>
-            <div className="anim-float-delayed absolute bottom-5 right-3 z-[2] flex max-w-[220px] items-center gap-3 rounded-2xl border border-white/70 bg-white/90 px-3.5 py-3 shadow-[0_12px_32px_rgb(44_42_38_/_0.14)] backdrop-blur-md sm:bottom-11 sm:right-5">
+            <div className="anim-float-delayed absolute bottom-5 right-3 z-[2] flex max-w-[220px] items-center gap-3 rounded-2xl border border-white/70 bg-white/95 px-3.5 py-3 text-[#2c2a26] shadow-[0_12px_32px_rgb(44_42_38_/_0.14)] backdrop-blur-md sm:bottom-11 sm:right-5">
               <Salad className="size-[18px] shrink-0 text-primary" aria-hidden />
-              <span className="text-[0.8rem] leading-snug text-foreground">
+              <span className="text-[0.8rem] leading-snug">
                 <strong className="block font-semibold">Smarter feeding</strong>
                 Guidance for their needs
               </span>

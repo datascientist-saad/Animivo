@@ -93,7 +93,7 @@ export function AppShell({ children, petSelector }: AppShellProps) {
       <SkipLink />
       <div className="mx-auto flex min-h-dvh max-w-7xl">
         <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card/50 p-5 md:flex">
-          <Logo className="mb-2" size="sm" priority />
+          <Logo href="/home" className="mb-2" size="sm" priority />
           {petSelector ? <div className="mb-6 mt-4">{petSelector}</div> : null}
           <nav className="flex flex-1 flex-col gap-1">
             {primaryNav.map((item) => (
@@ -128,7 +128,7 @@ export function AppShell({ children, petSelector }: AppShellProps) {
         <div className="flex min-h-dvh flex-1 flex-col">
           <header className="sticky top-0 z-30 border-b border-border bg-background/90 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur md:hidden">
             <div className="flex items-center justify-between gap-3">
-              <Logo size="sm" />
+              <Logo href="/home" size="sm" />
               {petSelector}
             </div>
           </header>

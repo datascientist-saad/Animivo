@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
+import { dispatchCareRemindersRefresh } from "@/lib/native/care-reminders";
 import { vaccinationSchema } from "@/lib/validations";
 import { VaccinationService } from "@/services/vaccination-service";
 import type { Vaccination } from "@/types/database";
@@ -84,6 +85,7 @@ export function AddVaccinationDialog({
       }
       onOpenChange(false);
       onSuccess?.();
+      dispatchCareRemindersRefresh();
     } catch (err) {
       toast.error(toUserMessage(err));
     } finally {

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
+import { dispatchCareRemindersRefresh } from "@/lib/native/care-reminders";
 import { careTaskSchema } from "@/lib/validations";
 import { CareTaskService } from "@/services/care-task-service";
 import type { CareCategory, CareFrequency } from "@/types/database";
@@ -90,6 +91,7 @@ export function AddCareTaskDialog({ petId, open, onOpenChange, onSuccess }: AddC
       setNotes("");
       onOpenChange(false);
       onSuccess?.();
+      dispatchCareRemindersRefresh();
     } catch (err) {
       toast.error(toUserMessage(err));
     } finally {

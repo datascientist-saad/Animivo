@@ -1,3 +1,4 @@
+/// <reference types="@capacitor/local-notifications" />
 import type { CapacitorConfig } from "@capacitor/cli";
 import { KeyboardResize } from "@capacitor/keyboard";
 import { NATIVE_APP_ID, NATIVE_APP_NAME, NATIVE_PRODUCTION_ORIGIN } from "./src/lib/native/constants";
@@ -44,6 +45,11 @@ const config: CapacitorConfig = {
     SystemBars: {
       insetsHandling: "css",
       style: "DARK",
+    },
+    LocalNotifications: {
+      smallIcon: "ic_stat_animivo",
+      iconColor: "#6b8f71",
+      presentationOptions: ["badge", "sound", "banner", "list"],
     },
   },
   android: {

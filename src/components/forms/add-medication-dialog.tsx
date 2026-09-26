@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { toUserMessage } from "@/lib/errors";
+import { dispatchCareRemindersRefresh } from "@/lib/native/care-reminders";
 import { medicationSchema } from "@/lib/validations";
 import { CareTaskService } from "@/services/care-task-service";
 import { MedicationService } from "@/services/medication-service";
@@ -117,6 +118,7 @@ export function AddMedicationDialog({
       setInstructions("");
       onOpenChange(false);
       onSuccess?.();
+      dispatchCareRemindersRefresh();
     } catch (err) {
       toast.error(toUserMessage(err));
     } finally {

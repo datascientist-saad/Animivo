@@ -3,6 +3,7 @@ import { parseNativeDeepLink, nativeAuthCallbackUrl } from "@/lib/native/deep-li
 import { isNativeRootPath, shouldExitOnBack } from "@/lib/native/navigation";
 import { canExecutePurchase, getUpgradeCta, providerForPlatform } from "@/lib/billing/provider";
 import { isNetworkError } from "@/lib/native/network";
+import { sleep } from "@/lib/native/care-reminders-plugin";
 import { isNativePluginAvailable, isNativeRuntime } from "@/lib/native/platform";
 import { withTimeout } from "@/lib/native/local-notifications";
 
@@ -84,5 +85,11 @@ describe("native plugin availability", () => {
     const hung = new Promise<string>(() => undefined);
     await expect(withTimeout(hung, 20, "unavailable")).resolves.toBe("unavailable");
     await expect(withTimeout(Promise.resolve("granted"), 20, "unavailable")).resolves.toBe("granted");
+  });
+
+  it("sleeps without hanging the test runner", async () => {
+    const started = Date.now();
+    await sleep(15);
+    expect(Date.now() - started).toBeGreaterThanOrEqual(10);
   });
 });

@@ -71,9 +71,6 @@ export function DeviceRemindersSettings({ prefs }: { prefs: NotificationPreferen
         toast.error("Notifications are blocked. Enable them in Android Settings → Apps → Animivo.");
         return;
       }
-      toast.error(
-        "Android didn’t show the permission prompt. Fully close Animivo, reopen it, then tap Enable reminders. If that still fails, reinstall the latest Android build."
-      );
     } finally {
       setAsking(false);
     }
@@ -142,11 +139,11 @@ function PermissionRow({
         {permission === "denied"
           ? "Android is blocking notifications for Animivo."
           : permission === "unavailable"
-            ? "This phone build can’t show the Android permission prompt yet. Reinstall the latest Animivo APK, then tap Enable reminders."
+            ? "This phone still has an older Animivo install. Lock-screen reminders need a rebuilt APK (npx cap sync android, then Run on the phone). After that, tap Try again."
             : "Allow lock-screen reminders on this phone."}
       </p>
       <Button onClick={onEnable} disabled={asking} className="rounded-xl sm:w-auto">
-        {asking ? "Asking…" : permission === "denied" ? "Try again" : "Enable reminders"}
+        {asking ? "Asking…" : permission === "prompt" ? "Enable reminders" : "Try again"}
       </Button>
     </div>
   );

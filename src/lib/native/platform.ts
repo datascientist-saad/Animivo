@@ -15,7 +15,9 @@ export function isNativeRuntime(): boolean {
 
 export function isNativePluginAvailable(name: string): boolean {
   if (!isNativeRuntime()) return false;
-  return getCapacitor()?.isPluginAvailable?.(name) === true;
+  const check = getCapacitor()?.isPluginAvailable;
+  if (typeof check !== "function") return true;
+  return check(name) === true;
 }
 
 export function getNativePlatform(): "ios" | "android" | "web" {

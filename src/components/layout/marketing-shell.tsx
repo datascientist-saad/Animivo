@@ -19,13 +19,18 @@ export function MarketingShell({ children, variant = "default" }: MarketingShell
   const isOnboarding = variant === "onboarding";
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div
+      className={cn(
+        "flex min-h-dvh flex-col bg-background",
+        isOnboarding && "onboarding-shell h-dvh max-h-dvh min-h-svh overflow-hidden",
+      )}
+    >
       <SkipLink />
       <header
         className={cn(
           "mx-auto flex w-full max-w-[1240px] shrink-0 items-center justify-between gap-4 px-5 md:px-8",
           isOnboarding
-            ? "sticky top-0 z-40 border-b border-border/60 bg-background/95 py-3 backdrop-blur-sm"
+            ? "sticky top-0 z-40 border-b border-border/60 bg-background/95 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-sm"
             : "h-[88px] md:h-[96px]",
         )}
       >
@@ -42,21 +47,19 @@ export function MarketingShell({ children, variant = "default" }: MarketingShell
         className={cn(
           "flex min-h-0 flex-1 flex-col",
           isOnboarding &&
-            "overflow-y-auto px-3 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-4 sm:pt-8 sm:pb-10",
+            "onboarding-scroll overflow-y-auto overscroll-y-contain [overflow-anchor:none] px-3 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-4 sm:pt-8 sm:pb-10",
         )}
       >
-        <div
-          className={cn(
-            isOnboarding && "flex flex-1 flex-col justify-start sm:justify-center",
-          )}
-        >
+        <div className={cn(isOnboarding && "flex w-full flex-col justify-start")}>
           {children}
         </div>
       </main>
       <footer
         className={cn(
           "shrink-0 border-t border-border px-5 md:px-8",
-          isOnboarding ? "py-4 text-center text-xs text-muted-foreground" : "mt-auto py-9",
+          isOnboarding
+            ? "onboarding-chrome py-4 text-center text-xs text-muted-foreground"
+            : "mt-auto py-9",
         )}
       >
         <div

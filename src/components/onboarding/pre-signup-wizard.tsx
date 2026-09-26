@@ -52,6 +52,7 @@ import {
   resetOnboardingDraft,
   saveOnboardingDraft,
 } from "@/lib/onboarding-draft";
+import { scheduleOnboardingScrollReset } from "@/lib/onboarding-scroll";
 import { createPetFromOnboardingDraft } from "@/lib/onboarding-transfer";
 import { uploadPetPhoto } from "@/lib/pet-photo";
 import { AnalyticsService } from "@/services/notification-service";
@@ -88,8 +89,8 @@ function withStepMeta(next: OnboardingDraftData, nextStep: number): OnboardingDr
 function focusField(id: string) {
   const node = document.getElementById(id);
   if (node instanceof HTMLElement) {
-    node.focus();
-    node.scrollIntoView({ block: "center", behavior: "smooth" });
+    node.focus({ preventScroll: true });
+    node.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
   }
 }
 
@@ -104,6 +105,16 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
   const [restartOpen, setRestartOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const startedRef = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.documentElement.classList.add("onboarding-active");
+    return () => document.documentElement.classList.remove("onboarding-active");
+  }, []);
+
+  useEffect(() => {
+    scheduleOnboardingScrollReset(rootRef.current);
+  }, [step]);
 
   useEffect(() => {
     if (isAuthenticatedFlow) {
@@ -266,8 +277,9 @@ export function PreSignupWizard({ mode = "pre-signup", onPetSaved }: PreSignupWi
 
   return (
     <div
+      ref={rootRef}
       className={cn(
-        "mx-auto flex w-full max-w-lg flex-col animate-fade-up",
+        "onboarding-wizard mx-auto flex w-full max-w-lg flex-col self-start animate-fade-up [overflow-anchor:none] scroll-mt-[calc(env(safe-area-inset-top)+5rem)]",
         isAuthenticatedFlow ? "pb-[max(1rem,env(safe-area-inset-bottom))]" : ""
       )}
     >

@@ -30,7 +30,10 @@ export function Logo({ className, showTagline = false, size, priority = false }:
         alt={brand.aiName}
         width={119}
         height={72}
-        className={cn("w-auto object-contain object-left", sizeClass[resolved])}
+        className={cn(
+          "w-auto object-contain object-left dark:rounded-xl dark:bg-[#faf7f2] dark:px-1.5 dark:py-0.5",
+          sizeClass[resolved]
+        )}
         priority={priority}
       />
     </Link>

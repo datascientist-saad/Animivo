@@ -16,7 +16,7 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="min-h-dvh bg-[#faf7f2] text-[#2c2a26]">
+      <body className="min-h-dvh bg-[#faf7f2] text-[#2c2a26] dark:bg-[#1c1a17] dark:text-[#f4efe8]">
         <div className="px-4 pt-16">
           <p className="mb-8 text-center text-lg font-semibold">{brand.name}</p>
           <ConnectionErrorState
